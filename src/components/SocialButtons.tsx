@@ -4,6 +4,7 @@ import { Alert, Platform, View } from 'react-native';
 
 import { authErrorMessage, signInWithApple, signInWithGoogle } from '@/lib/auth';
 import { radius, spacing, useTheme } from '@/theme';
+import { Divider } from './AuthShell';
 import { Button } from './Button';
 import { Txt } from './Txt';
 
@@ -35,8 +36,12 @@ export function SocialButtons() {
     }
   };
 
+  // Native Google/Apple sign-in is not available on web.
+  if (Platform.OS === 'web') return null;
+
   return (
     <View style={{ gap: spacing.md }}>
+      <Divider label="ili" />
       {appleAvailable && (
         <AppleAuthentication.AppleAuthenticationButton
           buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
@@ -48,15 +53,13 @@ export function SocialButtons() {
           onPress={apple}
         />
       )}
-      {Platform.OS !== 'web' && (
-        <Button
-          title="Nastavi sa Google"
-          variant="secondary"
-          loading={busy === 'google'}
-          onPress={google}
-          leading={<Txt weight="900" style={{ fontSize: 18, color: '#4285F4' }}>G</Txt>}
-        />
-      )}
+      <Button
+        title="Nastavi sa Google"
+        variant="secondary"
+        loading={busy === 'google'}
+        onPress={google}
+        leading={<Txt weight="900" style={{ fontSize: 18, color: '#4285F4' }}>G</Txt>}
+      />
     </View>
   );
 }

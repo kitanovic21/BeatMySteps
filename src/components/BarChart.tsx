@@ -46,23 +46,19 @@ export function BarChart({ data, height = 160, goal, onPressBar, labelEvery = 1 
             index={i}
             ratio={bar.value / max}
             height={height}
-            reachedGoal={goal != null && bar.value >= goal}
+            // Without a goal line every bar is colored and only the highlight stands out.
+            reachedGoal={bar.value > 0 && (goal == null ? !bar.highlight : bar.value >= goal)}
             onPress={onPressBar}
           />
         ))}
       </View>
       <View style={[styles.labels, { gap }]}>
         {data.map((bar, i) => (
-          <Txt
-            key={bar.key}
-            variant="caption"
-            muted={!bar.highlight}
-            weight={bar.highlight ? '800' : undefined}
-            style={styles.label}
-            numberOfLines={1}
-          >
-            {i % labelEvery === 0 ? bar.label : ''}
-          </Txt>
+          <View key={bar.key} style={styles.labelCell}>
+            <Txt variant="caption" muted={!bar.highlight} weight={bar.highlight ? '800' : undefined} style={styles.label}>
+              {i % labelEvery === 0 ? bar.label : ''}
+            </Txt>
+          </View>
         ))}
       </View>
     </View>
@@ -118,5 +114,6 @@ const styles = StyleSheet.create({
   },
   goalLabel: { position: 'absolute', right: 0, top: -16 },
   labels: { flexDirection: 'row', marginTop: 8 },
-  label: { flex: 1, textAlign: 'center', fontSize: 11 },
+  labelCell: { flex: 1, alignItems: 'center' },
+  label: { width: 32, textAlign: 'center', fontSize: 11 },
 });

@@ -132,7 +132,12 @@ export default function Today() {
             <Txt muted style={{ flex: 1 }}>Dodaj prijatelje i takmičite se ko će napraviti više koraka.</Txt>
           </Pressable>
         ) : (
-          board.slice(0, 3).map((e, i) => <LeaderboardRow key={e.user_id} entry={e} rank={i + 1} leader={board[0].steps} />)
+          <>
+            {board.slice(0, 3).map((e, i) => (
+              <LeaderboardRow key={e.user_id} entry={e} rank={i + 1} leader={board[0].steps} />
+            ))}
+            {myRank > 3 && <LeaderboardRow entry={board[myRank - 1]} rank={myRank} leader={board[0].steps} />}
+          </>
         )}
       </Card>
     </Screen>

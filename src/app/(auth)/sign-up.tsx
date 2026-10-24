@@ -2,7 +2,7 @@ import { router } from 'expo-router';
 import { useState } from 'react';
 import { Alert, View } from 'react-native';
 
-import { AuthShell, Divider } from '@/components/AuthShell';
+import { AuthShell } from '@/components/AuthShell';
 import { Button } from '@/components/Button';
 import { SocialButtons } from '@/components/SocialButtons';
 import { TextField } from '@/components/TextField';
@@ -51,7 +51,6 @@ export default function SignUp() {
         <TextField icon="lock-closed-outline" placeholder="Lozinka (min. 6 karaktera)" secure value={password} onChangeText={setPassword} textContentType="newPassword" />
       </View>
       <Button title="Registruj se" onPress={submit} loading={loading} />
-      <Divider label="ili" />
       <SocialButtons />
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 'auto' }}>
         <Txt muted>Već imaš nalog?</Txt>

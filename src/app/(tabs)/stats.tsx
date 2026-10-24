@@ -51,7 +51,7 @@ function buildBars(period: Period, range: Range, data: DailySteps | undefined): 
   }
   return eachDay(range.start, range.end).map((d, i) => ({
     key: toKey(d),
-    label: period === 'week' ? WEEKDAYS_SHORT[i] : String(d.getDate()),
+    label: period === 'week' ? WEEKDAYS_SHORT[i] : d.getDate() === 1 || d.getDate() % 5 === 0 ? String(d.getDate()) : '',
     value: stepsOn(data, d),
     highlight: isSameDay(d, today),
   }));
@@ -134,7 +134,6 @@ export default function Stats() {
                 data={bars}
                 height={180}
                 goal={period === 'year' ? undefined : goal}
-                labelEvery={period === 'month' ? 5 : 1}
                 onPressBar={period === 'year' ? undefined : (b) => setSelectedDay(fromKey(b.key))}
               />
             )}

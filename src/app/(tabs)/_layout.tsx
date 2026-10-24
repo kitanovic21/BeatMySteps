@@ -3,7 +3,8 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useQueryClient } from '@tanstack/react-query';
 import { Tabs } from 'expo-router';
 import { useEffect } from 'react';
-import { AppState, Platform, type ColorValue } from 'react-native';
+import { AppState, type ColorValue } from 'react-native';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 import { health } from '@/health';
 import { registerBackgroundSync } from '@/sync/backgroundTask';
@@ -54,6 +55,7 @@ const icon =
 
 export default function TabsLayout() {
   const { colors } = useTheme();
+  const insets = useSafeAreaInsets();
   useHealthSetup();
 
   return (
@@ -62,13 +64,15 @@ export default function TabsLayout() {
         headerShown: false,
         tabBarActiveTintColor: colors.primary,
         tabBarInactiveTintColor: colors.textMuted,
-        tabBarLabelStyle: { fontSize: 11, fontWeight: '700' },
+        tabBarLabelStyle: { fontSize: 11, lineHeight: 14, fontWeight: '700' },
+        tabBarIconStyle: { height: 24 },
         tabBarStyle: {
           backgroundColor: colors.tabBar,
           borderTopColor: colors.border,
-          height: Platform.OS === 'ios' ? 88 : 68,
+          // Room for icon + label above the home indicator / gesture bar.
+          height: 66 + insets.bottom,
           paddingTop: 8,
-          paddingBottom: Platform.OS === 'ios' ? 28 : 10,
+          paddingBottom: insets.bottom + 8,
         },
         sceneStyle: { backgroundColor: colors.background },
       }}

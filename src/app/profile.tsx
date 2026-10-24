@@ -1,7 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Alert, Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import { Avatar } from '@/components/Avatar';
 import { Button } from '@/components/Button';
@@ -96,13 +96,15 @@ function ProfileForm({ profile }: { profile: Profile }) {
 
       <Button title="Sačuvaj" onPress={save} loading={update.isPending} disabled={!dirty} />
 
-      <Card style={{ gap: spacing.sm }}>
-        <Pressable style={styles.link} onPress={() => health.openSettings()}>
-          <Ionicons name="heart-outline" size={22} color={colors.danger} />
-          <Txt style={{ flex: 1 }}>Dozvole za {health.name}</Txt>
-          <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
-        </Pressable>
-      </Card>
+      {Platform.OS !== 'web' && (
+        <Card style={{ gap: spacing.sm }}>
+          <Pressable style={styles.link} onPress={() => health.openSettings()}>
+            <Ionicons name="heart-outline" size={22} color={colors.danger} />
+            <Txt style={{ flex: 1 }}>Dozvole za {health.name}</Txt>
+            <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+          </Pressable>
+        </Card>
+      )}
 
       <Button title="Odjavi se" variant="danger" icon="log-out-outline" onPress={logout} />
     </>

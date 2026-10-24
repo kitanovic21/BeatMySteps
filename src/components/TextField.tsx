@@ -57,5 +57,6 @@ const styles = StyleSheet.create({
     paddingHorizontal: spacing.lg,
     minHeight: 54,
   },
-  input: { flex: 1, fontSize: 16, fontWeight: '500', paddingVertical: 14 },
+  // outlineWidth removes the browser focus ring on web; the border already shows focus.
+  input: { flex: 1, fontSize: 16, fontWeight: '500', paddingVertical: 14, outlineWidth: 0 },
 });
