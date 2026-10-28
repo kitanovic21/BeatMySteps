@@ -67,8 +67,13 @@ const config: ExpoConfig = {
     [
       'expo-build-properties',
       {
-        // compile/target SDK come from the Expo SDK defaults; Health Connect needs API 26+.
-        android: { minSdkVersion: 26 },
+        android: {
+          // compile/target SDK come from the Expo SDK defaults; Health Connect needs API 26+.
+          minSdkVersion: 26,
+          // R8 strips WorkManager's Room database (used by expo-background-task),
+          // which crashes release builds on launch.
+          enableMinifyInReleaseBuilds: false,
+        },
       },
     ],
   ],
