@@ -7,6 +7,7 @@ const googleIosUrlScheme =
 const config: ExpoConfig = {
   name: 'BeatMySteps',
   slug: 'beatmysteps',
+  owner: 'kitanovicdj',
   scheme: 'beatmysteps',
   version: '1.0.0',
   orientation: 'portrait',
@@ -72,6 +73,9 @@ const config: ExpoConfig = {
   ],
   experiments: {
     typedRoutes: true,
+  },
+  extra: {
+    eas: { projectId: '1f60064a-ab00-49b2-b001-9f4754c33b5f' },
   },
 };
 
