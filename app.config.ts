@@ -67,7 +67,8 @@ const config: ExpoConfig = {
     [
       'expo-build-properties',
       {
-        android: { compileSdkVersion: 36, targetSdkVersion: 36, minSdkVersion: 26 },
+        // compile/target SDK come from the Expo SDK defaults; Health Connect needs API 26+.
+        android: { minSdkVersion: 26 },
       },
     ],
   ],
