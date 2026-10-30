@@ -1,8 +1,9 @@
 const STEP_LENGTH_M = 0.762;
 const KCAL_PER_STEP = 0.04;
 
+/** 12345 → "12,345" */
 export function formatSteps(n: number): string {
-  return Math.round(n).toLocaleString('sr-Latn-RS').replace(/,/g, '.');
+  return String(Math.round(n)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
 }
 
 /** 8432 → "8.4k", 12000 → "12k" */
@@ -16,7 +17,7 @@ export function formatCompact(n: number): string {
 }
 
 export function stepsToKm(steps: number): string {
-  return ((steps * STEP_LENGTH_M) / 1000).toFixed(1).replace('.', ',');
+  return ((steps * STEP_LENGTH_M) / 1000).toFixed(1);
 }
 
 export function stepsToKcal(steps: number): string {

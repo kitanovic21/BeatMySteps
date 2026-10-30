@@ -22,7 +22,7 @@ export function SocialButtons() {
     try {
       await signInWithGoogle();
     } catch (e) {
-      Alert.alert('Google prijava nije uspela', authErrorMessage(e));
+      Alert.alert('Google sign-in failed', authErrorMessage(e));
     } finally {
       setBusy(null);
     }
@@ -32,7 +32,7 @@ export function SocialButtons() {
     try {
       await signInWithApple();
     } catch (e) {
-      Alert.alert('Apple prijava nije uspela', authErrorMessage(e));
+      Alert.alert('Apple sign-in failed', authErrorMessage(e));
     }
   };
 
@@ -41,7 +41,7 @@ export function SocialButtons() {
 
   return (
     <View style={{ gap: spacing.md }}>
-      <Divider label="ili" />
+      <Divider label="or" />
       {appleAvailable && (
         <AppleAuthentication.AppleAuthenticationButton
           buttonType={AppleAuthentication.AppleAuthenticationButtonType.CONTINUE}
@@ -54,7 +54,7 @@ export function SocialButtons() {
         />
       )}
       <Button
-        title="Nastavi sa Google"
+        title="Continue with Google"
         variant="secondary"
         loading={busy === 'google'}
         onPress={google}

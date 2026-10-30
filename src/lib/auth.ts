@@ -46,7 +46,7 @@ export async function signInWithGoogle(): Promise<boolean> {
   if (!isSuccessResponse(response)) return false;
 
   const idToken = response.data.idToken;
-  if (!idToken) throw new Error('Google nije vratio ID token');
+  if (!idToken) throw new Error('Google did not return an ID token');
 
   const { error } = await supabase.auth.signInWithIdToken({ provider: 'google', token: idToken });
   if (error) throw error;
@@ -71,7 +71,7 @@ export async function signInWithApple(): Promise<boolean> {
     if ((e as { code?: string }).code === 'ERR_REQUEST_CANCELED') return false;
     throw e;
   }
-  if (!credential.identityToken) throw new Error('Apple nije vratio identity token');
+  if (!credential.identityToken) throw new Error('Apple did not return an identity token');
 
   const { data, error } = await supabase.auth.signInWithIdToken({
     provider: 'apple',
@@ -99,12 +99,12 @@ export async function signOut() {
 
 export function authErrorMessage(e: unknown): string {
   const msg = (e as { message?: string })?.message ?? String(e);
-  if (/invalid login credentials/i.test(msg)) return 'Pogrešan email ili lozinka.';
-  if (/already registered/i.test(msg)) return 'Nalog sa ovim emailom već postoji.';
-  if (/password should be at least/i.test(msg)) return 'Lozinka mora imati bar 6 karaktera.';
-  if (/email not confirmed/i.test(msg)) return 'Potvrdi email adresu preko linka koji smo ti poslali.';
-  if (/network/i.test(msg)) return 'Nema internet konekcije.';
-  if (/duplicate key.*username|profiles_username_key/i.test(msg)) return 'Korisničko ime je zauzeto.';
+  if (/invalid login credentials/i.test(msg)) return 'Wrong email or password.';
+  if (/already registered/i.test(msg)) return 'An account with this email already exists.';
+  if (/password should be at least/i.test(msg)) return 'Password must be at least 6 characters.';
+  if (/email not confirmed/i.test(msg)) return 'Confirm your email using the link we sent you.';
+  if (/network/i.test(msg)) return 'No internet connection.';
+  if (/duplicate key.*username|profiles_username_key/i.test(msg)) return 'That username is taken.';
   return msg;
 }
 

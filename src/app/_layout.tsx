@@ -34,6 +34,7 @@ function RootNavigator() {
         <Stack.Protected guard={!!session} redirectTo="/sign-in">
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="profile" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="notifications" options={{ presentation: 'modal' }} />
         </Stack.Protected>
         <Stack.Protected guard={!session} redirectTo="/">
           <Stack.Screen name="(auth)" />

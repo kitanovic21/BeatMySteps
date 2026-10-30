@@ -15,7 +15,7 @@ export interface HealthSource {
 
 export class HealthPermissionError extends Error {
   constructor() {
-    super('Nema dozvole za čitanje koraka');
+    super('No permission to read steps');
     this.name = 'HealthPermissionError';
   }
 }

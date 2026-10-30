@@ -35,7 +35,9 @@ supabase/migrations SQL šema (tabele, RLS, RPC)
 ### 1. Supabase (besplatno)
 
 1. Napravi projekat na <https://supabase.com>.
-2. **SQL Editor** → nalepi i pokreni [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql).
+2. **SQL Editor** → nalepi i pokreni, redom:
+   - [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql) (tabele, prijatelji, rang lista)
+   - [`supabase/migrations/0002_notifications.sql`](supabase/migrations/0002_notifications.sql) (obaveštenja o zahtevima za prijateljstvo)
 3. **Project Settings → API** → kopiraj URL i `anon` ključ.
 4. `cp .env.example .env` i upiši vrednosti.
 

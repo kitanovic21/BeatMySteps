@@ -18,34 +18,34 @@ export default function SignIn() {
   const [loading, setLoading] = useState(false);
 
   const submit = async () => {
-    if (!email || !password) return Alert.alert('Unesi email i lozinku');
+    if (!email || !password) return Alert.alert('Enter your email and password');
     setLoading(true);
     try {
       await signInWithEmail(email, password);
     } catch (e) {
-      Alert.alert('Prijava nije uspela', authErrorMessage(e));
+      Alert.alert('Sign-in failed', authErrorMessage(e));
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <AuthShell title="Dobrodošao nazad 👋" subtitle="Prijavi se i nastavi da pobeđuješ svoje korake.">
+    <AuthShell title="Welcome back 👋" subtitle="Sign in and keep beating your steps.">
       {!isSupabaseConfigured && (
         <Txt variant="caption" color={colors.danger}>
-          Supabase nije podešen: dodaj EXPO_PUBLIC_SUPABASE_URL i EXPO_PUBLIC_SUPABASE_ANON_KEY u .env
+          Supabase is not configured: add EXPO_PUBLIC_SUPABASE_URL and EXPO_PUBLIC_SUPABASE_ANON_KEY to .env
         </Txt>
       )}
       <View style={{ gap: spacing.md }}>
         <TextField icon="mail-outline" placeholder="Email" keyboardType="email-address" value={email} onChangeText={setEmail} textContentType="emailAddress" />
-        <TextField icon="lock-closed-outline" placeholder="Lozinka" secure value={password} onChangeText={setPassword} textContentType="password" onSubmitEditing={submit} />
+        <TextField icon="lock-closed-outline" placeholder="Password" secure value={password} onChangeText={setPassword} textContentType="password" onSubmitEditing={submit} />
       </View>
-      <Button title="Prijavi se" onPress={submit} loading={loading} />
+      <Button title="Sign in" onPress={submit} loading={loading} />
       <SocialButtons />
       <View style={{ flexDirection: 'row', justifyContent: 'center', gap: 6, marginTop: 'auto' }}>
-        <Txt muted>Nemaš nalog?</Txt>
+        <Txt muted>Don&apos;t have an account?</Txt>
         <Link href="/sign-up">
-          <Txt weight="700" color={colors.primary}>Registruj se</Txt>
+          <Txt weight="700" color={colors.primary}>Sign up</Txt>
         </Link>
       </View>
     </AuthShell>

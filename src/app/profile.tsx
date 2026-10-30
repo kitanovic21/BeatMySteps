@@ -25,7 +25,7 @@ export default function ProfileScreen() {
 
   return (
     <Screen
-      title="Profil"
+      title="Profile"
       right={
         <Pressable onPress={() => router.back()} hitSlop={10}>
           <Ionicons name="close" size={28} color={colors.text} />
@@ -50,21 +50,21 @@ function ProfileForm({ profile }: { profile: Profile }) {
 
   const save = () => {
     if (!/^[a-z0-9_.]{3,20}$/.test(username)) {
-      return Alert.alert('Korisničko ime', '3–20 karaktera: mala slova, brojevi, _ i .');
+      return Alert.alert('Username', '3–20 characters: lowercase letters, numbers, _ and .');
     }
     update.mutate(
       { display_name: name.trim(), username, daily_goal: goal },
       {
         onSuccess: () => router.back(),
-        onError: (e) => Alert.alert('Čuvanje nije uspelo', authErrorMessage(e)),
+        onError: (e) => Alert.alert("Couldn't save changes", authErrorMessage(e)),
       },
     );
   };
 
   const logout = () =>
-    Alert.alert('Odjava', 'Da li želiš da se odjaviš?', [
-      { text: 'Otkaži', style: 'cancel' },
-      { text: 'Odjavi se', style: 'destructive', onPress: () => signOut() },
+    Alert.alert('Sign out', 'Do you want to sign out?', [
+      { text: 'Cancel', style: 'cancel' },
+      { text: 'Sign out', style: 'destructive', onPress: () => signOut() },
     ]);
 
   return (
@@ -76,37 +76,37 @@ function ProfileForm({ profile }: { profile: Profile }) {
       </View>
 
       <Card style={{ gap: spacing.md }}>
-        <Txt variant="label" muted>IME</Txt>
+        <Txt variant="label" muted>NAME</Txt>
         <TextField icon="person-outline" value={name} onChangeText={setName} autoCapitalize="words" />
-        <Txt variant="label" muted>KORISNIČKO IME</Txt>
+        <Txt variant="label" muted>USERNAME</Txt>
         <TextField icon="at" value={username} onChangeText={(t) => setUsername(t.toLowerCase())} />
       </Card>
 
       <Card style={{ gap: spacing.md }}>
-        <Txt variant="label" muted>DNEVNI CILJ</Txt>
+        <Txt variant="label" muted>DAILY GOAL</Txt>
         <View style={styles.goalRow}>
           <GoalButton icon="remove" onPress={() => setGoal((g) => Math.max(1000, g - GOAL_STEP))} />
           <View style={{ alignItems: 'center' }}>
             <Txt variant="title" style={{ fontVariant: ['tabular-nums'] }}>{formatSteps(goal)}</Txt>
-            <Txt variant="caption" muted>koraka dnevno</Txt>
+            <Txt variant="caption" muted>steps per day</Txt>
           </View>
           <GoalButton icon="add" onPress={() => setGoal((g) => Math.min(100_000, g + GOAL_STEP))} />
         </View>
       </Card>
 
-      <Button title="Sačuvaj" onPress={save} loading={update.isPending} disabled={!dirty} />
+      <Button title="Save" onPress={save} loading={update.isPending} disabled={!dirty} />
 
       {Platform.OS !== 'web' && (
         <Card style={{ gap: spacing.sm }}>
           <Pressable style={styles.link} onPress={() => health.openSettings()}>
             <Ionicons name="heart-outline" size={22} color={colors.danger} />
-            <Txt style={{ flex: 1 }}>Dozvole za {health.name}</Txt>
+            <Txt style={{ flex: 1 }}>{health.name} permissions</Txt>
             <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
           </Pressable>
         </Card>
       )}
 
-      <Button title="Odjavi se" variant="danger" icon="log-out-outline" onPress={logout} />
+      <Button title="Sign out" variant="danger" icon="log-out-outline" onPress={logout} />
     </>
   );
 }

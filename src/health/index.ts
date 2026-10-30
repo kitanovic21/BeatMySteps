@@ -13,7 +13,7 @@ function demoSteps(day: Date): number {
 }
 
 export const health: HealthSource = {
-  name: 'Demo podaci',
+  name: 'Demo data',
   isAvailable: async () => true,
   requestPermissions: async () => true,
   async getDailySteps(from, to) {

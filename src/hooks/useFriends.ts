@@ -59,6 +59,7 @@ function useInvalidateFriends() {
   return () => {
     qc.invalidateQueries({ queryKey: ['friendships'] });
     qc.invalidateQueries({ queryKey: ['leaderboard'] });
+    qc.invalidateQueries({ queryKey: ['notifications'] });
   };
 }
 

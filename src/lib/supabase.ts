@@ -44,6 +44,16 @@ export interface LeaderboardEntry {
 
 export type PublicProfile = Pick<Profile, 'id' | 'username' | 'display_name' | 'avatar_url'>;
 
+export interface AppNotification {
+  id: number;
+  type: 'friend_request' | 'friend_accepted';
+  read_at: string | null;
+  created_at: string;
+  friendship_id: number | null;
+  actor: PublicProfile;
+  friendship: { id: number; status: 'pending' | 'accepted' } | null;
+}
+
 export interface Friendship {
   id: number;
   status: 'pending' | 'accepted';

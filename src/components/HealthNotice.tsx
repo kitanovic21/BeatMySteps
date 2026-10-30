@@ -38,15 +38,15 @@ export function HealthNotice({ error }: { error: unknown }) {
         <Ionicons name="heart-dislike-outline" size={26} color={colors.danger} />
       </View>
       <Txt variant="heading" center>
-        {isPermission ? `Poveži ${health.name}` : `${health.name} nije dostupan`}
+        {isPermission ? `Connect ${health.name}` : `${health.name} is not available`}
       </Txt>
       <Txt muted center>
         {isPermission
-          ? 'Da bismo brojali tvoje korake, dozvoli BeatMySteps aplikaciji da čita korake.'
-          : 'Instaliraj ili ažuriraj Health Connect iz Play prodavnice, pa pokušaj ponovo.'}
+          ? 'To count your steps, allow BeatMySteps to read step data.'
+          : 'Install or update Health Connect from the Play Store, then try again.'}
       </Txt>
       <Button
-        title={isPermission ? 'Dozvoli pristup' : Platform.OS === 'android' ? 'Instaliraj Health Connect' : 'Otvori podešavanja'}
+        title={isPermission ? 'Allow access' : Platform.OS === 'android' ? 'Install Health Connect' : 'Open settings'}
         icon="fitness"
         onPress={connect}
       />

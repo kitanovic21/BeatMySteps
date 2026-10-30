@@ -31,7 +31,7 @@ export function LeaderboardRow({ entry, rank, leader }: { entry: LeaderboardEntr
           </Txt>
           {entry.is_me && (
             <View style={[styles.meBadge, { backgroundColor: colors.primary }]}>
-              <Txt variant="caption" color="#fff" weight="800" style={{ fontSize: 10 }}>TI</Txt>
+              <Txt variant="caption" color="#fff" weight="800" style={{ fontSize: 10 }}>YOU</Txt>
             </View>
           )}
         </View>

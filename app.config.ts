@@ -57,7 +57,7 @@ const config: ExpoConfig = {
       '@kingstinct/react-native-healthkit',
       {
         NSHealthShareUsageDescription:
-          'BeatMySteps čita tvoje korake da bi prikazao statistiku i takmičenje sa prijateljima.',
+          'BeatMySteps reads your step count to show your stats and compete with friends.',
         NSHealthUpdateUsageDescription: false,
         background: true,
       },
@@ -68,8 +68,9 @@ const config: ExpoConfig = {
       'expo-build-properties',
       {
         android: {
-          // compile/target SDK come from the Expo SDK defaults; Health Connect needs API 26+.
-          minSdkVersion: 26,
+          // compile/target SDK come from the Expo SDK defaults. The Health Connect app
+          // itself only runs on Android 9 (API 28) and newer.
+          minSdkVersion: 28,
           // R8 strips WorkManager's Room database (used by expo-background-task),
           // which crashes release builds on launch.
           enableMinifyInReleaseBuilds: false,

@@ -1,14 +1,14 @@
 // All dates are handled in the device's local time zone. A "day key" is YYYY-MM-DD.
 
 export const MONTHS = [
-  'Januar', 'Februar', 'Mart', 'April', 'Maj', 'Jun',
-  'Jul', 'Avgust', 'Septembar', 'Oktobar', 'Novembar', 'Decembar',
+  'January', 'February', 'March', 'April', 'May', 'June',
+  'July', 'August', 'September', 'October', 'November', 'December',
 ];
-export const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'Maj', 'Jun', 'Jul', 'Avg', 'Sep', 'Okt', 'Nov', 'Dec'];
+export const MONTHS_SHORT = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
 // Monday-first
-export const WEEKDAYS_SHORT = ['Pon', 'Uto', 'Sre', 'Čet', 'Pet', 'Sub', 'Ned'];
-export const WEEKDAYS_LETTER = ['P', 'U', 'S', 'Č', 'P', 'S', 'N'];
-const WEEKDAYS_LONG = ['Nedelja', 'Ponedeljak', 'Utorak', 'Sreda', 'Četvrtak', 'Petak', 'Subota'];
+export const WEEKDAYS_SHORT = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'];
+export const WEEKDAYS_LETTER = ['M', 'T', 'W', 'T', 'F', 'S', 'S'];
+const WEEKDAYS_LONG = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
 export type Period = 'day' | 'week' | 'month' | 'year';
 
@@ -96,9 +96,9 @@ export function formatRange(period: Period, range: Range): string {
       return formatLongDate(start);
     case 'week':
       if (start.getMonth() === end.getMonth()) {
-        return `${start.getDate()}. – ${end.getDate()}. ${MONTHS_SHORT[end.getMonth()]} ${end.getFullYear()}`;
+        return `${MONTHS_SHORT[start.getMonth()]} ${start.getDate()} – ${end.getDate()}, ${end.getFullYear()}`;
       }
-      return `${start.getDate()}. ${MONTHS_SHORT[start.getMonth()]} – ${end.getDate()}. ${MONTHS_SHORT[end.getMonth()]} ${end.getFullYear()}`;
+      return `${formatShortDate(start)} – ${formatShortDate(end)}, ${end.getFullYear()}`;
     case 'month':
       return `${MONTHS[start.getMonth()]} ${start.getFullYear()}`;
     case 'year':
@@ -107,9 +107,22 @@ export function formatRange(period: Period, range: Range): string {
 }
 
 export function formatLongDate(d: Date): string {
-  return `${WEEKDAYS_LONG[d.getDay()]}, ${d.getDate()}. ${MONTHS[d.getMonth()].toLowerCase()}`;
+  return `${WEEKDAYS_LONG[d.getDay()]}, ${MONTHS[d.getMonth()]} ${d.getDate()}`;
 }
 
 export function formatShortDate(d: Date): string {
-  return `${d.getDate()}. ${MONTHS_SHORT[d.getMonth()]}`;
+  return `${MONTHS_SHORT[d.getMonth()]} ${d.getDate()}`;
+}
+
+/** "just now", "5m", "3h", "2d", then a short date */
+export function formatTimeAgo(iso: string, now = new Date()): string {
+  const d = new Date(iso);
+  const mins = Math.floor((now.getTime() - d.getTime()) / 60_000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return `${hours}h ago`;
+  const days = Math.floor(hours / 24);
+  if (days < 7) return `${days}d ago`;
+  return formatShortDate(d);
 }

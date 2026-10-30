@@ -5,11 +5,13 @@ import { router } from 'expo-router';
 import { useEffect, useMemo } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
+import { Appear } from '@/components/Appear';
 import { Avatar } from '@/components/Avatar';
 import { BarChart } from '@/components/BarChart';
 import { Card } from '@/components/Card';
 import { HealthNotice } from '@/components/HealthNotice';
 import { LeaderboardRow } from '@/components/LeaderboardRow';
+import { HeaderActions, NotificationBell } from '@/components/NotificationBell';
 import { ProgressRing } from '@/components/ProgressRing';
 import { Screen } from '@/components/Screen';
 import { StatCard, StatRow } from '@/components/StatCard';
@@ -31,6 +33,13 @@ function useGoalCelebration(steps: number, goal: number) {
       AsyncStorage.setItem(key, '1');
     });
   }, [steps, goal]);
+}
+
+function greeting(now: Date) {
+  const h = now.getHours();
+  if (h < 12) return 'Good morning';
+  if (h < 18) return 'Good afternoon';
+  return 'Good evening';
 }
 
 export default function Today() {
@@ -62,84 +71,97 @@ export default function Today() {
   return (
     <Screen
       subtitle={formatLongDate(today)}
-      title={firstName ? `Zdravo, ${firstName}` : 'Zdravo'}
+      title={firstName ? `${greeting(today)}, ${firstName}` : greeting(today)}
       right={
-        <Pressable onPress={() => router.push('/profile')} hitSlop={8}>
-          <Avatar name={profile.data?.display_name ?? '?'} url={profile.data?.avatar_url} size={44} />
-        </Pressable>
+        <HeaderActions>
+          <NotificationBell />
+          <Pressable onPress={() => router.push('/profile')} hitSlop={8} accessibilityLabel="Profile">
+            <Avatar name={profile.data?.display_name ?? '?'} url={profile.data?.avatar_url} size={44} />
+          </Pressable>
+        </HeaderActions>
       }
       onRefresh={() => Promise.all([steps.refetch(), leaderboard.refetch()])}
     >
-      {steps.error ? (
-        <HealthNotice error={steps.error} />
-      ) : (
-        <Card style={styles.hero}>
-          <ProgressRing progress={progress} size={250} stroke={22}>
-            <Ionicons name="footsteps" size={26} color={colors.primary} />
-            {steps.isLoading ? (
-              <ActivityIndicator color={colors.primary} style={{ marginVertical: 14 }} />
-            ) : (
-              <Txt variant="display">{formatSteps(todaySteps)}</Txt>
-            )}
-            <Txt muted variant="label">od {formatSteps(goal)} koraka</Txt>
-          </ProgressRing>
-          <View style={[styles.pill, { backgroundColor: (progress >= 1 ? colors.primary : colors.secondary) + '1F' }]}>
-            <Txt variant="label" weight="700" color={progress >= 1 ? colors.primary : colors.secondary}>
-              {progress >= 1 ? '🎉 Dnevni cilj ostvaren!' : `Još ${formatSteps(remaining)} do cilja · ${Math.round(progress * 100)}%`}
-            </Txt>
-          </View>
-        </Card>
-      )}
-
-      <StatRow>
-        <StatCard icon="navigate" label="Distanca" value={`${stepsToKm(todaySteps)} km`} tint={colors.secondary} />
-        <StatCard icon="flame" label="Kalorije" value={stepsToKcal(todaySteps)} hint="kcal" tint="#F97316" />
-        <StatCard icon="time" label="Aktivno" value={stepsToMinutes(todaySteps)} hint="min" tint="#8B5CF6" />
-      </StatRow>
-
-      <Card style={{ gap: spacing.lg }}>
-        <View style={styles.cardHeader}>
-          <View>
-            <Txt variant="heading">Ova nedelja</Txt>
-            <Txt variant="caption" muted>
-              Ukupno {formatSteps(weekStats.total)} · prosek {formatSteps(weekStats.average)}/dan
-            </Txt>
-          </View>
-          <Pressable onPress={() => router.push('/stats')} hitSlop={8}>
-            <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
-          </Pressable>
-        </View>
-        <BarChart data={bars} goal={goal} height={130} />
-      </Card>
-
-      <Card style={{ gap: spacing.md }}>
-        <View style={styles.cardHeader}>
-          <View>
-            <Txt variant="heading">Danas među prijateljima</Txt>
-            {myRank > 0 && board.length > 1 && (
-              <Txt variant="caption" muted>Ti si #{myRank} od {board.length}</Txt>
-            )}
-          </View>
-          <Pressable onPress={() => router.push('/friends')} hitSlop={8}>
-            <Txt variant="label" color={colors.primary}>Sve</Txt>
-          </Pressable>
-        </View>
-        {leaderboard.isLoading ? (
-          <ActivityIndicator color={colors.primary} />
-        ) : board.length <= 1 ? (
-          <Pressable onPress={() => router.push('/friends')} style={styles.emptyFriends}>
-            <Ionicons name="people-outline" size={22} color={colors.primary} />
-            <Txt muted style={{ flex: 1 }}>Dodaj prijatelje i takmičite se ko će napraviti više koraka.</Txt>
-          </Pressable>
+      <Appear index={0}>
+        {steps.error ? (
+          <HealthNotice error={steps.error} />
         ) : (
-          <>
-            {board.slice(0, 3).map((e, i) => (
-              <LeaderboardRow key={e.user_id} entry={e} rank={i + 1} leader={board[0].steps} />
-            ))}
-            {myRank > 3 && <LeaderboardRow entry={board[myRank - 1]} rank={myRank} leader={board[0].steps} />}
-          </>
+          <Card style={styles.hero}>
+            <ProgressRing progress={progress} size={250} stroke={22}>
+              <Ionicons name="footsteps" size={26} color={colors.primary} />
+              {steps.isLoading ? (
+                <ActivityIndicator color={colors.primary} style={{ marginVertical: 14 }} />
+              ) : (
+                <Txt variant="display">{formatSteps(todaySteps)}</Txt>
+              )}
+              <Txt muted variant="label">of {formatSteps(goal)} steps</Txt>
+            </ProgressRing>
+            <View style={[styles.pill, { backgroundColor: (progress >= 1 ? colors.primary : colors.secondary) + '1F' }]}>
+              <Txt variant="label" weight="700" color={progress >= 1 ? colors.primary : colors.secondary}>
+                {progress >= 1
+                  ? '🎉 Daily goal reached!'
+                  : `${formatSteps(remaining)} steps to go · ${Math.round(progress * 100)}%`}
+              </Txt>
+            </View>
+          </Card>
         )}
-      </Card>
+      </Appear>
+
+      <Appear index={1}>
+        <StatRow>
+          <StatCard icon="navigate" label="Distance" value={`${stepsToKm(todaySteps)} km`} tint={colors.secondary} />
+          <StatCard icon="flame" label="Calories" value={stepsToKcal(todaySteps)} hint="kcal" tint="#F97316" />
+          <StatCard icon="time" label="Active" value={stepsToMinutes(todaySteps)} hint="min" tint="#8B5CF6" />
+        </StatRow>
+      </Appear>
+
+      <Appear index={2}>
+        <Card style={{ gap: spacing.lg }}>
+          <View style={styles.cardHeader}>
+            <View>
+              <Txt variant="heading">This week</Txt>
+              <Txt variant="caption" muted>
+                {formatSteps(weekStats.total)} total · {formatSteps(weekStats.average)}/day average
+              </Txt>
+            </View>
+            <Pressable onPress={() => router.push('/stats')} hitSlop={8} accessibilityLabel="Open stats">
+              <Ionicons name="chevron-forward" size={20} color={colors.textMuted} />
+            </Pressable>
+          </View>
+          <BarChart data={bars} goal={goal} height={130} />
+        </Card>
+      </Appear>
+
+      <Appear index={3}>
+        <Card style={{ gap: spacing.md }}>
+          <View style={styles.cardHeader}>
+            <View>
+              <Txt variant="heading">Today with friends</Txt>
+              {myRank > 0 && board.length > 1 && (
+                <Txt variant="caption" muted>You&apos;re #{myRank} of {board.length}</Txt>
+              )}
+            </View>
+            <Pressable onPress={() => router.push('/friends')} hitSlop={8}>
+              <Txt variant="label" color={colors.primary}>See all</Txt>
+            </Pressable>
+          </View>
+          {leaderboard.isLoading ? (
+            <ActivityIndicator color={colors.primary} />
+          ) : board.length <= 1 ? (
+            <Pressable onPress={() => router.push('/friends')} style={styles.emptyFriends}>
+              <Ionicons name="people-outline" size={22} color={colors.primary} />
+              <Txt muted style={{ flex: 1 }}>Add friends and see who walks the most each day.</Txt>
+            </Pressable>
+          ) : (
+            <>
+              {board.slice(0, 3).map((e, i) => (
+                <LeaderboardRow key={e.user_id} entry={e} rank={i + 1} leader={board[0].steps} />
+              ))}
+              {myRank > 3 && <LeaderboardRow entry={board[myRank - 1]} rank={myRank} leader={board[0].steps} />}
+            </>
+          )}
+        </Card>
+      </Appear>
     </Screen>
   );
 }
