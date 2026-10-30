@@ -1,7 +1,7 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { ActivityIndicator, Alert, Platform, Pressable, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Platform, Pressable, StyleSheet, View } from 'react-native';
 
 import { Avatar } from '@/components/Avatar';
 import { Button } from '@/components/Button';
@@ -14,6 +14,7 @@ import { health } from '@/health';
 import { authErrorMessage, signOut } from '@/lib/auth';
 import type { Profile } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
+import { useDialog } from '@/providers/DialogProvider';
 import { radius, spacing, useTheme } from '@/theme';
 import { formatSteps } from '@/utils/format';
 
@@ -41,6 +42,7 @@ function ProfileForm({ profile }: { profile: Profile }) {
   const { colors } = useTheme();
   const { session } = useAuth();
   const update = useUpdateProfile();
+  const dialog = useDialog();
 
   const [name, setName] = useState(profile.display_name);
   const [username, setUsername] = useState(profile.username);
@@ -50,22 +52,27 @@ function ProfileForm({ profile }: { profile: Profile }) {
 
   const save = () => {
     if (!/^[a-z0-9_.]{3,20}$/.test(username)) {
-      return Alert.alert('Username', '3–20 characters: lowercase letters, numbers, _ and .');
+      return dialog.alert('Check your username', 'Use 3–20 characters: lowercase letters, numbers, _ and .', 'warning');
     }
     update.mutate(
       { display_name: name.trim(), username, daily_goal: goal },
       {
         onSuccess: () => router.back(),
-        onError: (e) => Alert.alert("Couldn't save changes", authErrorMessage(e)),
+        onError: (e) => dialog.alert("Couldn't save changes", authErrorMessage(e), 'error'),
       },
     );
   };
 
-  const logout = () =>
-    Alert.alert('Sign out', 'Do you want to sign out?', [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Sign out', style: 'destructive', onPress: () => signOut() },
-    ]);
+  const logout = async () => {
+    const ok = await dialog.confirm({
+      title: 'Sign out?',
+      message: 'You can sign back in any time. Your steps stay saved.',
+      confirmLabel: 'Sign out',
+      destructive: true,
+      icon: 'log-out-outline',
+    });
+    if (ok) signOut();
+  };
 
   return (
     <>

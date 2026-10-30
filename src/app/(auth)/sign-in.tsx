@@ -1,6 +1,6 @@
 import { Link } from 'expo-router';
 import { useState } from 'react';
-import { Alert, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AuthShell } from '@/components/AuthShell';
 import { Button } from '@/components/Button';
@@ -9,21 +9,23 @@ import { TextField } from '@/components/TextField';
 import { Txt } from '@/components/Txt';
 import { authErrorMessage, signInWithEmail } from '@/lib/auth';
 import { isSupabaseConfigured } from '@/lib/supabase';
+import { useDialog } from '@/providers/DialogProvider';
 import { spacing, useTheme } from '@/theme';
 
 export default function SignIn() {
   const { colors } = useTheme();
+  const dialog = useDialog();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
 
   const submit = async () => {
-    if (!email || !password) return Alert.alert('Enter your email and password');
+    if (!email || !password) return dialog.alert('Enter your email and password', undefined, 'warning');
     setLoading(true);
     try {
       await signInWithEmail(email, password);
     } catch (e) {
-      Alert.alert('Sign-in failed', authErrorMessage(e));
+      dialog.alert('Sign-in failed', authErrorMessage(e), 'error');
     } finally {
       setLoading(false);
     }

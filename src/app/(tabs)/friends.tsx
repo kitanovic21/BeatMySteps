@@ -1,7 +1,6 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
-import * as Haptics from 'expo-haptics';
 import { useEffect, useState } from 'react';
-import { ActivityIndicator, Alert, Pressable, Share, StyleSheet, View } from 'react-native';
+import { ActivityIndicator, Pressable, Share, StyleSheet, View } from 'react-native';
 import Animated, {
   Easing,
   FadeIn,
@@ -34,6 +33,7 @@ import {
 } from '@/hooks/useFriends';
 import { useProfile } from '@/hooks/useProfile';
 import type { LeaderboardEntry, PublicProfile } from '@/lib/supabase';
+import { useDialog } from '@/providers/DialogProvider';
 import { radius, spacing, useTheme } from '@/theme';
 
 type BoardPeriod = 'day' | 'week' | 'month';
@@ -43,11 +43,11 @@ const BOARD_PERIODS: { value: BoardPeriod; label: string }[] = [
   { value: 'month', label: 'Month' },
 ];
 
-const RESULT_TEXT: Record<FriendRequestResult, string> = {
-  sent: 'Friend request sent!',
-  accepted: "You're now friends! 🎉",
-  already_friends: "You're already friends.",
-  already_sent: 'Request already sent.',
+const RESULT_TEXT: Record<FriendRequestResult, { title: string; message: string }> = {
+  sent: { title: 'Request sent', message: "They'll show up on your leaderboard once they accept." },
+  accepted: { title: "You're now friends! 🎉", message: 'They had already sent you a request.' },
+  already_friends: { title: "You're already friends", message: 'Find them on your leaderboard.' },
+  already_sent: { title: 'Request already sent', message: "Waiting for them to accept." },
 };
 
 function errorText(e: unknown) {
@@ -64,6 +64,7 @@ const rowLayout = LinearTransition.springify().damping(18);
 
 export default function Friends() {
   const { colors } = useTheme();
+  const dialog = useDialog();
   const [period, setPeriod] = useState<BoardPeriod>('day');
   const [search, setSearch] = useState('');
   const board = useLeaderboard(period);
@@ -82,18 +83,22 @@ export default function Friends() {
   const add = (p: PublicProfile) =>
     send.mutate(p.username, {
       onSuccess: (r) => {
-        Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success).catch(() => undefined);
-        Alert.alert(RESULT_TEXT[r]);
+        dialog.alert(RESULT_TEXT[r].title, RESULT_TEXT[r].message, 'success');
         setSearch('');
       },
-      onError: (e) => Alert.alert("Couldn't send request", errorText(e)),
+      onError: (e) => dialog.alert("Couldn't send request", errorText(e), 'error'),
     });
 
-  const confirmRemove = (id: number, name: string) =>
-    Alert.alert('Remove friend', `Remove ${name} from your friends?`, [
-      { text: 'Cancel', style: 'cancel' },
-      { text: 'Remove', style: 'destructive', onPress: () => remove.mutate(id) },
-    ]);
+  const confirmRemove = async (id: number, name: string) => {
+    const ok = await dialog.confirm({
+      title: `Remove ${name}?`,
+      message: 'You will no longer see each other on the leaderboard.',
+      confirmLabel: 'Remove',
+      destructive: true,
+      icon: 'person-remove-outline',
+    });
+    if (ok) remove.mutate(id);
+  };
 
   const invite = () =>
     Share.share({

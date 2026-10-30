@@ -1,6 +1,6 @@
 import { router } from 'expo-router';
 import { useState } from 'react';
-import { Alert, View } from 'react-native';
+import { View } from 'react-native';
 
 import { AuthShell } from '@/components/AuthShell';
 import { Button } from '@/components/Button';
@@ -8,12 +8,14 @@ import { SocialButtons } from '@/components/SocialButtons';
 import { TextField } from '@/components/TextField';
 import { Txt } from '@/components/Txt';
 import { authErrorMessage, isUsernameAvailable, signUpWithEmail } from '@/lib/auth';
+import { useDialog } from '@/providers/DialogProvider';
 import { spacing, useTheme } from '@/theme';
 
 const USERNAME_RE = /^[a-z0-9_.]{3,20}$/;
 
 export default function SignUp() {
   const { colors } = useTheme();
+  const dialog = useDialog();
   const [displayName, setDisplayName] = useState('');
   const [username, setUsername] = useState('');
   const [email, setEmail] = useState('');
@@ -22,21 +24,21 @@ export default function SignUp() {
 
   const submit = async () => {
     const u = username.trim().toLowerCase();
-    if (!displayName.trim()) return Alert.alert('Enter your name');
-    if (!USERNAME_RE.test(u)) return Alert.alert('Username', '3–20 characters: lowercase letters, numbers, _ and .');
-    if (!email.includes('@')) return Alert.alert('Enter a valid email');
-    if (password.length < 6) return Alert.alert('Password must be at least 6 characters');
+    if (!displayName.trim()) return dialog.alert('Enter your name', 'Your friends will see this on the leaderboard.', 'warning');
+    if (!USERNAME_RE.test(u)) return dialog.alert('Check your username', 'Use 3–20 characters: lowercase letters, numbers, _ and .', 'warning');
+    if (!email.includes('@')) return dialog.alert('Enter a valid email', undefined, 'warning');
+    if (password.length < 6) return dialog.alert('Password too short', 'Use at least 6 characters.', 'warning');
 
     setLoading(true);
     try {
-      if (!(await isUsernameAvailable(u))) return Alert.alert('Username taken', 'Please try another one.');
+      if (!(await isUsernameAvailable(u))) return dialog.alert('Username taken', 'Please try another one.', 'warning');
       const { needsConfirmation } = await signUpWithEmail({ email, password, displayName, username: u });
       if (needsConfirmation) {
-        Alert.alert('Check your email', 'We sent you a confirmation link. Confirm your account, then sign in.');
+        dialog.alert('Check your email', 'We sent you a confirmation link. Confirm your account, then sign in.', 'success');
         router.back();
       }
     } catch (e) {
-      Alert.alert('Sign-up failed', authErrorMessage(e));
+      dialog.alert('Sign-up failed', authErrorMessage(e), 'error');
     } finally {
       setLoading(false);
     }

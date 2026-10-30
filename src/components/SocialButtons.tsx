@@ -1,8 +1,9 @@
 import * as AppleAuthentication from 'expo-apple-authentication';
 import { useEffect, useState } from 'react';
-import { Alert, Platform, View } from 'react-native';
+import { Platform, View } from 'react-native';
 
 import { authErrorMessage, signInWithApple, signInWithGoogle } from '@/lib/auth';
+import { useDialog } from '@/providers/DialogProvider';
 import { radius, spacing, useTheme } from '@/theme';
 import { Divider } from './AuthShell';
 import { Button } from './Button';
@@ -10,6 +11,7 @@ import { Txt } from './Txt';
 
 export function SocialButtons() {
   const { dark } = useTheme();
+  const dialog = useDialog();
   const [appleAvailable, setAppleAvailable] = useState(false);
   const [busy, setBusy] = useState<'google' | null>(null);
 
@@ -22,7 +24,7 @@ export function SocialButtons() {
     try {
       await signInWithGoogle();
     } catch (e) {
-      Alert.alert('Google sign-in failed', authErrorMessage(e));
+      dialog.alert('Google sign-in failed', authErrorMessage(e), 'error');
     } finally {
       setBusy(null);
     }
@@ -32,7 +34,7 @@ export function SocialButtons() {
     try {
       await signInWithApple();
     } catch (e) {
-      Alert.alert('Apple sign-in failed', authErrorMessage(e));
+      dialog.alert('Apple sign-in failed', authErrorMessage(e), 'error');
     }
   };
 
