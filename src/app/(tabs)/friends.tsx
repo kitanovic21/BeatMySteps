@@ -35,6 +35,7 @@ import { useProfile } from '@/hooks/useProfile';
 import type { LeaderboardEntry, PublicProfile } from '@/lib/supabase';
 import { useDialog } from '@/providers/DialogProvider';
 import { radius, spacing, useTheme } from '@/theme';
+import { formatSteps } from '@/utils/format';
 
 type BoardPeriod = 'day' | 'week' | 'month';
 const BOARD_PERIODS: { value: BoardPeriod; label: string }[] = [
@@ -76,6 +77,8 @@ export default function Friends() {
   const remove = useRemoveFriendship();
 
   const entries = board.data ?? [];
+  // The podium already shows the top 3, so the list below it starts at 4th place.
+  const podiumCount = entries.length > 1 ? 3 : 0;
   const knownIds = new Set(
     [...friendships.friends, ...friendships.incoming, ...friendships.outgoing].map((f) => f.profile.id),
   );
@@ -134,9 +137,9 @@ export default function Friends() {
         <View key={period} style={{ gap: spacing.md }}>
           {entries.length > 1 && <Podium entries={entries.slice(0, 3)} />}
           <View style={{ gap: 4 }}>
-            {entries.map((e, i) => (
+            {entries.slice(podiumCount).map((e, i) => (
               <Animated.View key={e.user_id} entering={rowEntering(i)} layout={rowLayout}>
-                <LeaderboardRow entry={e} rank={i + 1} leader={entries[0].steps} />
+                <LeaderboardRow entry={e} rank={podiumCount + i + 1} leader={entries[0].steps} />
               </Animated.View>
             ))}
           </View>
@@ -154,10 +157,8 @@ export default function Friends() {
             {friendships.incoming.map(({ friendship, profile: p }, i) => (
               <Animated.View key={friendship.id} entering={rowEntering(i)} exiting={rowExiting} layout={rowLayout}>
                 <PersonRow profile={p}>
+                  <Button title="Decline" small variant="secondary" onPress={() => remove.mutate(friendship.id)} />
                   <Button title="Accept" small onPress={() => accept.mutate(friendship.id)} />
-                  <Pressable onPress={() => remove.mutate(friendship.id)} hitSlop={8} accessibilityLabel="Decline">
-                    <Ionicons name="close-circle" size={28} color={colors.textMuted} />
-                  </Pressable>
                 </PersonRow>
               </Animated.View>
             ))}
@@ -261,9 +262,14 @@ function Podium({ entries }: { entries: LeaderboardEntry[] }) {
           <View key={e.user_id} style={styles.podiumCol}>
             <Animated.View entering={FadeInDown.delay(riseOrder[i] * 120 + 200).duration(300)} style={styles.podiumPerson}>
               <Avatar name={e.display_name} url={e.avatar_url} size={i === 1 ? 56 : 46} />
-              <Txt variant="caption" weight="700" numberOfLines={1} style={{ maxWidth: 90 }}>
-                {e.display_name.split(' ')[0]}
-              </Txt>
+              <View style={styles.podiumName}>
+                <Txt variant="caption" weight="700" numberOfLines={1} style={{ maxWidth: 90 }}>
+                  {e.display_name.split(' ')[0]}
+                </Txt>
+                <Txt variant="caption" muted weight="600" style={{ fontVariant: ['tabular-nums'] }}>
+                  {formatSteps(e.steps)}
+                </Txt>
+              </View>
             </Animated.View>
             <PodiumBlock height={PODIUM_HEIGHTS[i]} color={medals[i]} place={places[i]} delay={riseOrder[i] * 120} />
           </View>
@@ -305,6 +311,7 @@ const styles = StyleSheet.create({
   podium: { flexDirection: 'row', alignItems: 'flex-end', justifyContent: 'center', gap: spacing.md, paddingTop: spacing.sm },
   podiumCol: { flex: 1, alignItems: 'center', gap: 6 },
   podiumPerson: { alignItems: 'center', gap: 6 },
+  podiumName: { alignItems: 'center' },
   podiumSlot: { width: '100%', justifyContent: 'flex-end' },
   podiumBlock: {
     width: '100%',

@@ -138,11 +138,11 @@ export default function Stats() {
                   tint={colors.gold}
                 />
                 <StatCard
-                  icon="checkmark-circle"
+                  icon="checkmark"
                   label="Goal reached"
                   value={`${stats.daysAtGoal}/${stats.elapsedDays}`}
                   hint={stats.elapsedDays ? `${Math.round((stats.daysAtGoal / stats.elapsedDays) * 100)}% of days` : undefined}
-                  tint="#8B5CF6"
+                  tint={colors.violet}
                 />
               </StatRow>
 
@@ -195,7 +195,7 @@ function DayView({ steps, goal, loading }: { steps: number; goal: number; loadin
       </Card>
       <StatRow>
         <StatCard icon="navigate" label="Distance" value={`${stepsToKm(steps)} km`} tint={colors.secondary} />
-        <StatCard icon="flame" label="Calories" value={stepsToKcal(steps)} hint="kcal" tint="#F97316" />
+        <StatCard icon="flame" label="Calories" value={stepsToKcal(steps)} hint="kcal" tint={colors.amber} />
         <StatCard
           icon="flag"
           label="Goal"

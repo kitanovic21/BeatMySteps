@@ -30,7 +30,7 @@ export function Txt({ variant = 'body', muted, color, weight, center, style, ...
 
 const styles = StyleSheet.create({
   display: { fontSize: 44, fontWeight: '900', letterSpacing: -1.5, fontVariant: ['tabular-nums'] },
-  title: { fontSize: 28, fontWeight: '800', letterSpacing: -0.6 },
+  title: { fontSize: 30, fontWeight: '900', letterSpacing: -0.8 },
   heading: { fontSize: 18, fontWeight: '700', letterSpacing: -0.2 },
   body: { fontSize: 15, fontWeight: '500' },
   label: { fontSize: 13, fontWeight: '600' },

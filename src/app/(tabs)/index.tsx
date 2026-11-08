@@ -96,8 +96,8 @@ export default function Today() {
               )}
               <Txt muted variant="label">of {formatSteps(goal)} steps</Txt>
             </ProgressRing>
-            <View style={[styles.pill, { backgroundColor: (progress >= 1 ? colors.primary : colors.secondary) + '1F' }]}>
-              <Txt variant="label" weight="700" color={progress >= 1 ? colors.primary : colors.secondary}>
+            <View style={[styles.pill, { backgroundColor: progress >= 1 ? colors.primary + '1F' : colors.cardAlt }]}>
+              <Txt variant="label" weight="700" color={progress >= 1 ? colors.primary : colors.text}>
                 {progress >= 1
                   ? '🎉 Daily goal reached!'
                   : `${formatSteps(remaining)} steps to go · ${Math.round(progress * 100)}%`}
@@ -110,8 +110,8 @@ export default function Today() {
       <Appear index={1}>
         <StatRow>
           <StatCard icon="navigate" label="Distance" value={`${stepsToKm(todaySteps)} km`} tint={colors.secondary} />
-          <StatCard icon="flame" label="Calories" value={stepsToKcal(todaySteps)} hint="kcal" tint="#F97316" />
-          <StatCard icon="time" label="Active" value={stepsToMinutes(todaySteps)} hint="min" tint="#8B5CF6" />
+          <StatCard icon="flame" label="Calories" value={stepsToKcal(todaySteps)} hint="kcal" tint={colors.amber} />
+          <StatCard icon="time" label="Active" value={stepsToMinutes(todaySteps)} hint="min" tint={colors.violet} />
         </StatRow>
       </Appear>
 

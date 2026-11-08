@@ -9,7 +9,8 @@ import { Txt } from './Txt';
 interface Props {
   title: string;
   onPress: () => void;
-  variant?: 'primary' | 'secondary' | 'ghost' | 'danger';
+  /** tonal: quiet stone pill, e.g. a settled 'Saved' state. */
+  variant?: 'primary' | 'secondary' | 'ghost' | 'danger' | 'tonal';
   icon?: keyof typeof Ionicons.glyphMap;
   leading?: ReactNode;
   loading?: boolean;
@@ -21,7 +22,15 @@ interface Props {
 export function Button({ title, onPress, variant = 'primary', icon, leading, loading, disabled, small, style }: Props) {
   const { colors } = useTheme();
   const fg =
-    variant === 'primary' ? colors.white : variant === 'danger' ? colors.danger : variant === 'ghost' ? colors.primary : colors.text;
+    variant === 'primary'
+      ? colors.onPrimary
+      : variant === 'danger'
+        ? colors.danger
+        : variant === 'ghost'
+          ? colors.primary
+          : variant === 'tonal'
+            ? colors.textMuted
+            : colors.text;
 
   const content = (
     <View style={[styles.inner, small && styles.small]}>
@@ -47,7 +56,9 @@ export function Button({ title, onPress, variant = 'primary', icon, leading, loa
         styles.base,
         variant === 'secondary' && { backgroundColor: colors.card, borderColor: colors.border, borderWidth: 1 },
         variant === 'danger' && { backgroundColor: colors.danger + '15' },
-        { opacity: disabled ? 0.5 : pressed ? 0.85 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] },
+        variant === 'tonal' && { backgroundColor: colors.cardAlt },
+        // A tonal button is already quiet, so it stays fully opaque when disabled.
+        { opacity: disabled && variant !== 'tonal' ? 0.5 : pressed ? 0.85 : 1, transform: [{ scale: pressed ? 0.98 : 1 }] },
         style,
       ]}
     >

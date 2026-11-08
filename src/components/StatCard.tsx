@@ -21,7 +21,7 @@ export function StatCard({ icon, label, value, hint, tint }: Props) {
       <View style={[styles.icon, { backgroundColor: c + '22' }]}>
         <Ionicons name={icon} size={18} color={c} />
       </View>
-      <Txt variant="caption" muted>{label}</Txt>
+      <Txt variant="caption" muted style={styles.label} numberOfLines={1}>{label}</Txt>
       <Txt variant="heading" style={styles.value} numberOfLines={1} adjustsFontSizeToFit>
         {value}
       </Txt>
@@ -45,5 +45,6 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
     marginBottom: spacing.sm,
   },
-  value: { fontSize: 20, fontWeight: '800', fontVariant: ['tabular-nums'] },
+  label: { fontSize: 13 },
+  value: { fontSize: 22, fontWeight: '900', letterSpacing: -0.4, fontVariant: ['tabular-nums'] },
 });

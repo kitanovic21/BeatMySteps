@@ -24,7 +24,7 @@ const config: ExpoConfig = {
   android: {
     package: 'com.beatmysteps.app',
     adaptiveIcon: {
-      backgroundColor: '#0B1220',
+      backgroundColor: '#F95C4B',
       foregroundImage: './assets/android-icon-foreground.png',
       backgroundImage: './assets/android-icon-background.png',
       monochromeImage: './assets/android-icon-monochrome.png',
@@ -49,8 +49,8 @@ const config: ExpoConfig = {
       {
         image: './assets/splash-icon.png',
         imageWidth: 160,
-        backgroundColor: '#F4F7FB',
-        dark: { backgroundColor: '#0B1220' },
+        backgroundColor: '#F6F4F1',
+        dark: { backgroundColor: '#000000' },
       },
     ],
     [

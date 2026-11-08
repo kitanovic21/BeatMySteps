@@ -1,40 +1,48 @@
 import { useColorScheme } from 'react-native';
 
+// Brand palette: Paper #F6F4F1, Stone #E4DED2, Coral #F95C4B, Black #000000.
 const shared = {
-  primary: '#10B981',
-  primaryDark: '#059669',
-  secondary: '#06B6D4',
-  gradient: ['#22C55E', '#06B6D4'] as const,
-  warm: ['#F97316', '#F43F5E'] as const,
-  danger: '#EF4444',
+  primary: '#F95C4B',
+  primaryDark: '#E2412F',
+  /** Text and icons drawn on top of coral. */
+  onPrimary: '#000000',
+  gradient: ['#F95C4B', '#FF8E6E'] as const,
+  danger: '#E5322D',
   gold: '#F5B301',
-  silver: '#A3B1C2',
+  silver: '#A3AFC0',
   bronze: '#D9822B',
   white: '#FFFFFF',
 };
 
 export const lightColors = {
   ...shared,
-  background: '#F4F7FB',
+  // Icon accents for stat cards
+  secondary: '#17A08A',
+  amber: '#F29A1F',
+  violet: '#7C5CFA',
+  background: '#F6F4F1',
   card: '#FFFFFF',
-  cardAlt: '#EEF3F8',
-  text: '#0B1220',
-  textMuted: '#64748B',
-  border: '#E2E8F0',
-  track: '#E6ECF2',
+  cardAlt: '#E4DED2',
+  text: '#000000',
+  textMuted: '#6B655C',
+  border: '#E4DED2',
+  track: '#E4DED2',
   tabBar: '#FFFFFF',
 };
 
 export const darkColors: typeof lightColors = {
   ...shared,
-  background: '#0B1220',
-  card: '#131C2E',
-  cardAlt: '#1A2539',
-  text: '#F1F5F9',
-  textMuted: '#94A3B8',
-  border: '#1E293B',
-  track: '#1F2B40',
-  tabBar: '#0F1729',
+  secondary: '#3CCFB4',
+  amber: '#FBBF24',
+  violet: '#A78BFA',
+  background: '#000000',
+  card: '#151413',
+  cardAlt: '#2A2826',
+  text: '#F6F4F1',
+  textMuted: '#9B958C',
+  border: '#2A2826',
+  track: '#2A2826',
+  tabBar: '#000000',
 };
 
 export type Colors = typeof lightColors;

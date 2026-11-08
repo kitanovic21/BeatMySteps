@@ -35,7 +35,7 @@ export function BarChart({ data, height = 160, goal, onPressBar, labelEvery = 1 
         {goal != null && goal > 0 && (
           <View style={[styles.goalLine, { bottom: (goal / max) * height, borderColor: colors.textMuted }]}>
             <Txt variant="caption" muted style={styles.goalLabel}>
-              {formatCompact(goal)}
+              Goal {formatCompact(goal)}
             </Txt>
           </View>
         )}
@@ -88,12 +88,23 @@ function BarColumn({
   }, [ratio, index, h]);
 
   const style = useAnimatedStyle(() => ({ height: Math.max(h.value * height, 4) }));
-  const gradient = reachedGoal ? colors.gradient : bar.highlight ? colors.warm : ([colors.track, colors.track] as const);
+  // Today below goal reads as "still in progress": a soft coral fill with a dashed outline.
+  const inProgress = bar.highlight && !reachedGoal;
 
   return (
     <Pressable style={styles.column} onPress={onPress && (() => onPress(bar))} disabled={!onPress}>
-      <Animated.View style={[styles.bar, style]}>
-        <LinearGradient colors={gradient} style={StyleSheet.absoluteFill} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} />
+      <Animated.View
+        style={[
+          styles.bar,
+          inProgress && [styles.inProgress, { borderColor: colors.primary, backgroundColor: colors.primary + '45' }],
+          style,
+        ]}
+      >
+        {reachedGoal ? (
+          <LinearGradient colors={colors.gradient} style={StyleSheet.absoluteFill} start={{ x: 0, y: 1 }} end={{ x: 0, y: 0 }} />
+        ) : (
+          !inProgress && <View style={[StyleSheet.absoluteFill, { backgroundColor: colors.track }]} />
+        )}
       </Animated.View>
     </Pressable>
   );
@@ -103,6 +114,7 @@ const styles = StyleSheet.create({
   plot: { flexDirection: 'row', alignItems: 'flex-end' },
   column: { flex: 1, height: '100%', justifyContent: 'flex-end' },
   bar: { width: '100%', borderRadius: radius.sm, overflow: 'hidden' },
+  inProgress: { borderWidth: 1.5, borderStyle: 'dashed' },
   goalLine: {
     position: 'absolute',
     left: 0,

@@ -55,7 +55,7 @@ export function DayCell({ date, steps, goal, index, future, today, selected, onP
         style={[
           styles.day,
           { backgroundColor: future ? 'transparent' : levelColor(steps / goal, colors) },
-          (today || selected) && { borderColor: selected ? colors.secondary : colors.primary, borderWidth: 2 },
+          (today || selected) && { borderColor: selected ? colors.text : colors.primary, borderWidth: 2 },
           animatedStyle,
         ]}
       >
@@ -70,13 +70,13 @@ export function DayCell({ date, steps, goal, index, future, today, selected, onP
         <Txt
           variant="label"
           weight="800"
-          color={reached ? '#fff' : future ? colors.textMuted : colors.text}
+          color={reached ? colors.onPrimary : future ? colors.textMuted : colors.text}
           style={{ opacity: future ? 0.5 : 1 }}
         >
           {date.getDate()}
         </Txt>
         {!future && (
-          <Txt variant="caption" color={reached ? '#ffffffdd' : colors.textMuted} style={styles.steps} numberOfLines={1}>
+          <Txt variant="caption" color={reached ? colors.onPrimary : colors.text} style={styles.steps} numberOfLines={1}>
             {steps > 0 ? formatCompact(steps) : '–'}
           </Txt>
         )}
@@ -97,5 +97,5 @@ const styles = StyleSheet.create({
     gap: 1,
     overflow: 'hidden',
   },
-  steps: { fontSize: 10, fontWeight: '700' },
+  steps: { fontSize: 10, fontWeight: '700', opacity: 0.8 },
 });

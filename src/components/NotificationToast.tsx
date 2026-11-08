@@ -62,7 +62,7 @@ const styles = StyleSheet.create({
     borderWidth: StyleSheet.hairlineWidth,
   },
   shadow: {
-    shadowColor: '#0B1220',
+    shadowColor: '#000',
     shadowOpacity: 0.15,
     shadowRadius: 20,
     shadowOffset: { width: 0, height: 8 },

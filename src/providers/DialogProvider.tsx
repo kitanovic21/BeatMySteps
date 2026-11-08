@@ -187,7 +187,7 @@ export function useDialog(): DialogApi {
 
 const styles = StyleSheet.create({
   root: { flex: 1, alignItems: 'center', justifyContent: 'center', padding: spacing.xl },
-  backdrop: { backgroundColor: 'rgba(6, 10, 20, 0.55)' },
+  backdrop: { backgroundColor: 'rgba(0, 0, 0, 0.55)' },
   card: {
     width: '100%',
     maxWidth: 360,
@@ -198,7 +198,7 @@ const styles = StyleSheet.create({
     gap: spacing.lg,
   },
   shadow: {
-    shadowColor: '#0B1220',
+    shadowColor: '#000',
     shadowOpacity: 0.2,
     shadowRadius: 30,
     shadowOffset: { width: 0, height: 12 },

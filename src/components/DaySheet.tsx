@@ -92,8 +92,8 @@ export function DaySheet({ day, steps, goal, onClose }: Props) {
                 </View>
                 <StatRow>
                   <StatCard icon="navigate" label="Distance" value={`${stepsToKm(steps)} km`} tint={colors.secondary} />
-                  <StatCard icon="flame" label="Calories" value={stepsToKcal(steps)} hint="kcal" tint="#F97316" />
-                  <StatCard icon="time" label="Active" value={stepsToMinutes(steps)} hint="min" tint="#8B5CF6" />
+                  <StatCard icon="flame" label="Calories" value={stepsToKcal(steps)} hint="kcal" tint={colors.amber} />
+                  <StatCard icon="time" label="Active" value={stepsToMinutes(steps)} hint="min" tint={colors.violet} />
                 </StatRow>
               </>
             )}

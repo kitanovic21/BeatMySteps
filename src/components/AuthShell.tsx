@@ -1,10 +1,8 @@
-import Ionicons from '@expo/vector-icons/Ionicons';
-import { LinearGradient } from 'expo-linear-gradient';
 import type { PropsWithChildren } from 'react';
-import { KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
+import { Image, KeyboardAvoidingView, Platform, ScrollView, StyleSheet, View } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
-import { radius, spacing, useTheme } from '@/theme';
+import { spacing, useTheme } from '@/theme';
 import { Txt } from './Txt';
 
 export function AuthShell({ title, subtitle, children }: PropsWithChildren<{ title: string; subtitle: string }>) {
@@ -19,9 +17,7 @@ export function AuthShell({ title, subtitle, children }: PropsWithChildren<{ tit
         keyboardShouldPersistTaps="handled"
       >
         <View style={styles.brand}>
-          <LinearGradient colors={colors.gradient} start={{ x: 0, y: 0 }} end={{ x: 1, y: 1 }} style={styles.logo}>
-            <Ionicons name="footsteps" size={36} color="#fff" />
-          </LinearGradient>
+          <Image source={require('../../assets/logo.png')} style={styles.logo} accessibilityIgnoresInvertColors />
           <Txt variant="title">BeatMySteps</Txt>
         </View>
         <View style={{ gap: spacing.xs }}>
@@ -48,7 +44,7 @@ export function Divider({ label }: { label: string }) {
 const styles = StyleSheet.create({
   content: { flexGrow: 1, paddingHorizontal: spacing.xl, gap: spacing.lg },
   brand: { alignItems: 'center', gap: spacing.md, marginBottom: spacing.lg },
-  logo: { width: 76, height: 76, borderRadius: radius.lg, alignItems: 'center', justifyContent: 'center' },
+  logo: { width: 88, height: 88 },
   divider: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, marginVertical: spacing.xs },
   line: { flex: 1, height: StyleSheet.hairlineWidth },
 });

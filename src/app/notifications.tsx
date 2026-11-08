@@ -79,16 +79,20 @@ function NotificationRow({ notification: n }: { notification: AppNotification })
   const unread = !n.read_at;
 
   return (
-    <Card style={[styles.row, unread && { borderColor: colors.primary + '66', backgroundColor: colors.primary + '0D' }]}>
+    <Card style={styles.row}>
       <View>
         <Avatar name={n.actor.display_name} url={n.actor.avatar_url} size={46} />
-        <View style={[styles.typeIcon, { backgroundColor: n.type === 'friend_request' ? colors.secondary : colors.primary, borderColor: colors.card }]}>
-          <Ionicons name={n.type === 'friend_request' ? 'person-add' : 'checkmark'} size={11} color={colors.white} />
+        <View style={[styles.typeIcon, { backgroundColor: n.type === 'friend_request' ? colors.text : colors.primary, borderColor: colors.card }]}>
+          <Ionicons
+            name={n.type === 'friend_request' ? 'person-add' : 'checkmark'}
+            size={11}
+            color={n.type === 'friend_request' ? colors.background : colors.onPrimary}
+          />
         </View>
       </View>
       <View style={{ flex: 1, gap: spacing.sm }}>
         <Txt>
-          <Txt weight="700">{n.actor.display_name}</Txt> {notificationText(n.type)}
+          <Txt weight={unread ? '800' : '700'}>{n.actor.display_name}</Txt> {notificationText(n.type)}
         </Txt>
         <Txt variant="caption" muted>{formatTimeAgo(n.created_at)}</Txt>
         {pendingRequest && (

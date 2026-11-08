@@ -21,7 +21,7 @@ export function LeaderboardRow({ entry, rank, leader }: { entry: LeaderboardEntr
       ]}
     >
       <View style={styles.rank}>
-        {medal ? <Ionicons name="medal" size={22} color={medal} /> : <Txt variant="label" muted>{rank}</Txt>}
+        {medal ? <Ionicons name="medal-outline" size={18} color={medal} /> : <Txt variant="label" muted>{rank}</Txt>}
       </View>
       <Avatar name={entry.display_name} url={entry.avatar_url} size={40} />
       <View style={styles.body}>
@@ -31,7 +31,7 @@ export function LeaderboardRow({ entry, rank, leader }: { entry: LeaderboardEntr
           </Txt>
           {entry.is_me && (
             <View style={[styles.meBadge, { backgroundColor: colors.primary }]}>
-              <Txt variant="caption" color="#fff" weight="800" style={{ fontSize: 10 }}>YOU</Txt>
+              <Txt variant="caption" color={colors.onPrimary} weight="800" style={{ fontSize: 10 }}>YOU</Txt>
             </View>
           )}
         </View>
@@ -39,7 +39,7 @@ export function LeaderboardRow({ entry, rank, leader }: { entry: LeaderboardEntr
           <View style={[styles.fill, { width: `${Math.max(pct * 100, 2)}%`, backgroundColor: medal ?? colors.primary }]} />
         </View>
       </View>
-      <Txt variant="body" weight="800" style={styles.steps}>
+      <Txt variant="body" weight="800" style={styles.steps} numberOfLines={1}>
         {formatSteps(entry.steps)}
       </Txt>
     </View>
@@ -62,5 +62,6 @@ const styles = StyleSheet.create({
   meBadge: { paddingHorizontal: 6, paddingVertical: 1, borderRadius: radius.pill },
   track: { height: 6, borderRadius: 3, overflow: 'hidden' },
   fill: { height: '100%', borderRadius: 3 },
-  steps: { fontVariant: ['tabular-nums'] },
+  // Fixed column so every progress bar ends at the same spot.
+  steps: { width: 56, textAlign: 'right', fontVariant: ['tabular-nums'] },
 });

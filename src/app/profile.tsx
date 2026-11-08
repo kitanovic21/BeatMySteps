@@ -101,19 +101,29 @@ function ProfileForm({ profile }: { profile: Profile }) {
         </View>
       </Card>
 
-      <Button title="Save" onPress={save} loading={update.isPending} disabled={!dirty} />
-
-      {Platform.OS !== 'web' && (
-        <Card style={{ gap: spacing.sm }}>
-          <Pressable style={styles.link} onPress={() => health.openSettings()}>
-            <Ionicons name="heart-outline" size={22} color={colors.danger} />
-            <Txt style={{ flex: 1 }}>{health.name} permissions</Txt>
-            <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
-          </Pressable>
-        </Card>
+      {dirty ? (
+        <Button title="Save" onPress={save} loading={update.isPending} />
+      ) : (
+        <Button title="Saved" variant="tonal" onPress={save} disabled />
       )}
 
-      <Button title="Sign out" variant="danger" icon="log-out-outline" onPress={logout} />
+      {/* Account actions sit apart from Save so Sign out is never tapped by mistake. */}
+      <Card style={styles.list}>
+        {Platform.OS !== 'web' && (
+          <>
+            <Pressable style={styles.link} onPress={() => health.openSettings()}>
+              <Ionicons name="heart-outline" size={22} color={colors.danger} />
+              <Txt style={{ flex: 1 }}>{health.name} permissions</Txt>
+              <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+            </Pressable>
+            <View style={[styles.separator, { backgroundColor: colors.border }]} />
+          </>
+        )}
+        <Pressable style={styles.link} onPress={logout}>
+          <Ionicons name="log-out-outline" size={22} color={colors.danger} />
+          <Txt weight="600" color={colors.danger} style={{ flex: 1 }}>Sign out</Txt>
+        </Pressable>
+      </Card>
     </>
   );
 }
@@ -131,5 +141,7 @@ const styles = StyleSheet.create({
   header: { alignItems: 'center', gap: spacing.xs },
   goalRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   goalBtn: { width: 48, height: 48, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },
-  link: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.xs },
+  list: { paddingVertical: spacing.xs, marginTop: spacing.xl },
+  link: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md },
+  separator: { height: StyleSheet.hairlineWidth, marginLeft: 22 + spacing.md },
 });
