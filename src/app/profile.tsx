@@ -7,6 +7,7 @@ import { Avatar } from '@/components/Avatar';
 import { Button } from '@/components/Button';
 import { Card } from '@/components/Card';
 import { Screen } from '@/components/Screen';
+import { SegmentedControl } from '@/components/SegmentedControl';
 import { TextField } from '@/components/TextField';
 import { Txt } from '@/components/Txt';
 import { useProfile, useUpdateProfile } from '@/hooks/useProfile';
@@ -15,10 +16,16 @@ import { authErrorMessage, signOut } from '@/lib/auth';
 import type { Profile } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
 import { useDialog } from '@/providers/DialogProvider';
-import { radius, spacing, useTheme } from '@/theme';
+import { radius, setThemePreference, spacing, useTheme, useThemePreference, type ThemePreference } from '@/theme';
 import { formatSteps } from '@/utils/format';
 
 const GOAL_STEP = 500;
+
+const THEME_OPTIONS: { value: ThemePreference; label: string }[] = [
+  { value: 'system', label: 'System' },
+  { value: 'light', label: 'Light' },
+  { value: 'dark', label: 'Dark' },
+];
 
 export default function ProfileScreen() {
   const { colors } = useTheme();
@@ -107,6 +114,8 @@ function ProfileForm({ profile }: { profile: Profile }) {
         <Button title="Saved" variant="tonal" onPress={save} disabled />
       )}
 
+      <AppearanceCard />
+
       {/* Account actions sit apart from Save so Sign out is never tapped by mistake. */}
       <Card style={styles.list}>
         {Platform.OS !== 'web' && (
@@ -128,6 +137,20 @@ function ProfileForm({ profile }: { profile: Profile }) {
   );
 }
 
+/** Applies right away and is remembered on this device; it doesn't wait for Save. */
+function AppearanceCard() {
+  const preference = useThemePreference();
+  return (
+    <Card style={{ gap: spacing.md, marginTop: spacing.xl }}>
+      <Txt variant="label" muted>APPEARANCE</Txt>
+      <SegmentedControl options={THEME_OPTIONS} value={preference} onChange={setThemePreference} />
+      <Txt variant="caption" muted>
+        {preference === 'system' ? 'Matches your phone’s light or dark mode.' : 'Always uses this theme, whatever your phone is set to.'}
+      </Txt>
+    </Card>
+  );
+}
+
 function GoalButton({ icon, onPress }: { icon: 'add' | 'remove'; onPress: () => void }) {
   const { colors } = useTheme();
   return (
@@ -141,7 +164,7 @@ const styles = StyleSheet.create({
   header: { alignItems: 'center', gap: spacing.xs },
   goalRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   goalBtn: { width: 48, height: 48, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },
-  list: { paddingVertical: spacing.xs, marginTop: spacing.xl },
+  list: { paddingVertical: spacing.xs },
   link: { flexDirection: 'row', alignItems: 'center', gap: spacing.md, paddingVertical: spacing.md },
   separator: { height: StyleSheet.hairlineWidth, marginLeft: 22 + spacing.md },
 });

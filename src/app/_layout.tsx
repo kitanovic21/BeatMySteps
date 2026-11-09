@@ -10,7 +10,7 @@ import { SafeAreaProvider } from 'react-native-safe-area-context';
 
 import { AuthProvider, useAuth } from '@/providers/AuthProvider';
 import { DialogProvider } from '@/providers/DialogProvider';
-import { useTheme } from '@/theme';
+import { useTheme, useThemePreferenceReady } from '@/theme';
 
 SplashScreen.preventAutoHideAsync().catch(() => undefined);
 
@@ -21,12 +21,15 @@ const queryClient = new QueryClient({
 function RootNavigator() {
   const { session, loading } = useAuth();
   const { colors, dark } = useTheme();
+  // Wait for the saved theme so the app never flashes the wrong one.
+  const themeReady = useThemePreferenceReady();
+  const ready = !loading && themeReady;
 
   useEffect(() => {
-    if (!loading) SplashScreen.hideAsync().catch(() => undefined);
-  }, [loading]);
+    if (ready) SplashScreen.hideAsync().catch(() => undefined);
+  }, [ready]);
 
-  if (loading) return null;
+  if (!ready) return null;
 
   return (
     <>

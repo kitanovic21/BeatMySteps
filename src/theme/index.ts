@@ -1,5 +1,9 @@
 import { useColorScheme } from 'react-native';
 
+import { useThemePreference } from './preference';
+
+export { setThemePreference, useThemePreference, useThemePreferenceReady, type ThemePreference } from './preference';
+
 // Brand palette: Paper #F6F4F1, Stone #E4DED2, Coral #F95C4B, Black #000000.
 const shared = {
   primary: '#F95C4B',
@@ -52,6 +56,7 @@ export const spacing = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 };
 
 export function useTheme() {
   const scheme = useColorScheme();
-  const dark = scheme === 'dark';
+  const preference = useThemePreference();
+  const dark = preference === 'system' ? scheme === 'dark' : preference === 'dark';
   return { colors: dark ? darkColors : lightColors, dark };
 }
