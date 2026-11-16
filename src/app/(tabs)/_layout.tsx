@@ -13,6 +13,7 @@ import { useFriendships } from '@/hooks/useFriends';
 import { useNotificationsRealtime, type IncomingNotification } from '@/hooks/useNotifications';
 import { registerBackgroundSync } from '@/sync/backgroundTask';
 import { syncSteps } from '@/sync/syncSteps';
+import { refreshWidgets } from '@/widgets';
 import { useTheme } from '@/theme';
 
 const PERMISSION_ASKED_KEY = 'bms:healthPermissionAsked';
@@ -25,7 +26,8 @@ function useHealthSetup() {
       qc.invalidateQueries({ queryKey: ['steps'] });
       syncSteps()
         .then(() => qc.invalidateQueries({ queryKey: ['leaderboard'] }))
-        .catch(() => undefined);
+        .catch(() => undefined)
+        .finally(() => refreshWidgets().catch(() => undefined));
     };
 
     (async () => {

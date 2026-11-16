@@ -2,6 +2,8 @@ import * as BackgroundTask from 'expo-background-task';
 import * as TaskManager from 'expo-task-manager';
 import { Platform } from 'react-native';
 
+import { refreshWidgets } from '@/widgets';
+
 import { syncSteps } from './syncSteps';
 
 const TASK_NAME = 'bms-sync-steps';
@@ -11,6 +13,7 @@ if (Platform.OS !== 'web') {
   TaskManager.defineTask(TASK_NAME, async () => {
     try {
       await syncSteps();
+      await refreshWidgets().catch(() => undefined);
       return BackgroundTask.BackgroundTaskResult.Success;
     } catch {
       return BackgroundTask.BackgroundTaskResult.Failed;

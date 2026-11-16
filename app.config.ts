@@ -45,6 +45,36 @@ const config: ExpoConfig = {
     'expo-apple-authentication',
     'expo-font',
     [
+      'react-native-android-widget',
+      {
+        widgets: [
+          {
+            name: 'Steps',
+            label: 'My steps',
+            description: "Today's steps and your daily goal",
+            minWidth: '180dp',
+            minHeight: '110dp',
+            targetCellWidth: 3,
+            targetCellHeight: 2,
+            resizeMode: 'horizontal|vertical',
+            // 30 minutes, the shortest Android allows.
+            updatePeriodMillis: 1800000,
+          },
+          {
+            name: 'Leaderboard',
+            label: 'Leaderboard',
+            description: 'Top 3 friends today and your place',
+            minWidth: '250dp',
+            minHeight: '180dp',
+            targetCellWidth: 4,
+            targetCellHeight: 3,
+            resizeMode: 'horizontal|vertical',
+            updatePeriodMillis: 1800000,
+          },
+        ],
+      },
+    ],
+    [
       'expo-image-picker',
       {
         photosPermission: 'BeatMySteps uses your photos so you can set a profile picture.',
