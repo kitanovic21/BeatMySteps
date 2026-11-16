@@ -102,7 +102,13 @@ export function useRemoveFriendship() {
 
 export function useSearchUsers(term: string) {
   const userId = useUserId();
-  const q = term.trim().replace(/[%_,()]/g, '');
+  // "@" is how usernames are shown, so people type it; it's never part of the name.
+  // Only characters that would break the PostgREST filter are removed. "_" stays: in
+  // ILIKE it matches any single character, including the "_" in names like stefan_k.
+  const q = term
+    .trim()
+    .replace(/^@+/, '')
+    .replace(/[%,()"*\\]/g, '');
   return useQuery({
     queryKey: ['userSearch', q],
     enabled: q.length >= 2,
@@ -114,7 +120,10 @@ export function useSearchUsers(term: string) {
         .neq('id', userId)
         .limit(20);
       if (error) throw error;
-      return data as PublicProfile[];
+      // Exact username first, then usernames starting with the query.
+      const lower = q.toLowerCase();
+      const rank = (p: PublicProfile) => (p.username === lower ? 0 : p.username.startsWith(lower) ? 1 : 2);
+      return (data as PublicProfile[]).sort((a, b) => rank(a) - rank(b));
     },
   });
 }
