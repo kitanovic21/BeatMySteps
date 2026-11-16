@@ -41,6 +41,9 @@ export default function SignIn() {
       <View style={{ gap: spacing.md }}>
         <TextField icon="mail-outline" placeholder="Email" keyboardType="email-address" value={email} onChangeText={setEmail} textContentType="emailAddress" />
         <TextField icon="lock-closed-outline" placeholder="Password" secure value={password} onChangeText={setPassword} textContentType="password" onSubmitEditing={submit} />
+        <Link href="/forgot-password" style={{ alignSelf: 'flex-end' }}>
+          <Txt variant="label" weight="700" color={colors.primary}>Forgot password?</Txt>
+        </Link>
       </View>
       <Button title="Sign in" onPress={submit} loading={loading} />
       <SocialButtons />

@@ -2,6 +2,8 @@ import { GoogleSignin, isSuccessResponse } from '@react-native-google-signin/goo
 import * as AppleAuthentication from 'expo-apple-authentication';
 import * as Crypto from 'expo-crypto';
 
+import { refreshWidgets } from '@/widgets';
+
 import { supabase } from './supabase';
 
 let googleConfigured = false;
@@ -95,6 +97,49 @@ export async function signOut() {
     // Not signed in with Google.
   }
   await supabase.auth.signOut();
+  // Widgets would otherwise keep showing this account's steps.
+  refreshWidgets().catch(() => undefined);
+}
+
+/** Where the reset email link sends the user; must be listed under Redirect URLs in Supabase. */
+export const PASSWORD_RESET_URL = 'beatmysteps://reset-password';
+
+export async function requestPasswordReset(email: string) {
+  const { error } = await supabase.auth.resetPasswordForEmail(email.trim(), { redirectTo: PASSWORD_RESET_URL });
+  if (error) throw error;
+}
+
+/**
+ * Signs in with the one-time session from a reset link. Handles both link styles:
+ * tokens in the #fragment (implicit flow) and ?code= (PKCE flow).
+ */
+export async function startRecoverySession(url: string) {
+  const [beforeHash, hash = ''] = url.split('#');
+  const params = new URLSearchParams(hash);
+  new URLSearchParams(beforeHash.split('?')[1] ?? '').forEach((v, k) => params.set(k, v));
+
+  const linkError = params.get('error_description');
+  if (linkError) throw new Error(linkError);
+
+  const code = params.get('code');
+  if (code) {
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) throw error;
+    return true;
+  }
+  const access_token = params.get('access_token');
+  const refresh_token = params.get('refresh_token');
+  if (access_token && refresh_token) {
+    const { error } = await supabase.auth.setSession({ access_token, refresh_token });
+    if (error) throw error;
+    return true;
+  }
+  return false;
+}
+
+export async function updatePassword(password: string) {
+  const { error } = await supabase.auth.updateUser({ password });
+  if (error) throw error;
 }
 
 export function authErrorMessage(e: unknown): string {
@@ -105,6 +150,9 @@ export function authErrorMessage(e: unknown): string {
   if (/email not confirmed/i.test(msg)) return 'Confirm your email using the link we sent you.';
   if (/network/i.test(msg)) return 'No internet connection.';
   if (/duplicate key.*username|profiles_username_key/i.test(msg)) return 'That username is taken.';
+  if (/should be different from the old password/i.test(msg)) return "Choose a password you haven't used before.";
+  if (/for security purposes|rate limit/i.test(msg)) return 'Too many attempts. Wait a minute and try again.';
+  if (/expired|invalid.*(token|link)|otp/i.test(msg)) return 'This link has expired. Request a new one.';
   return msg;
 }
 

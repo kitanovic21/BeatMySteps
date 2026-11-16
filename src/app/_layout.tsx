@@ -45,6 +45,8 @@ function RootNavigator() {
         <Stack.Protected guard={!session} redirectTo="/">
           <Stack.Screen name="(auth)" />
         </Stack.Protected>
+        {/* Opened from the reset email: works signed in or out. */}
+        <Stack.Screen name="reset-password" />
       </Stack>
     </>
   );

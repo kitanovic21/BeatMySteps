@@ -42,6 +42,7 @@ supabase/migrations SQL šema (tabele, RLS, RPC)
    - [`supabase/migrations/0004_profile_names.sql`](supabase/migrations/0004_profile_names.sql) (ime ne sme biti prazno)
 3. **Project Settings → API** → kopiraj URL i `anon` ključ.
 4. `cp .env.example .env` i upiši vrednosti.
+5. **Authentication → URL Configuration → Redirect URLs** → dodaj `beatmysteps://reset-password` (link iz emaila za zaboravljenu lozinku otvara aplikaciju).
 
 ### 2. Google prijava
 
