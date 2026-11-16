@@ -1,9 +1,10 @@
 import Ionicons from '@expo/vector-icons/Ionicons';
 import { useQueryClient } from '@tanstack/react-query';
-import { Linking, Platform, StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 
 import { health, HealthPermissionError } from '@/health';
 import { spacing, useTheme } from '@/theme';
+import { openPlayStore } from '@/utils/store';
 import { Button } from './Button';
 import { Card } from './Card';
 import { Txt } from './Txt';
@@ -19,9 +20,7 @@ export function HealthNotice({ error }: { error: unknown }) {
   const connect = async () => {
     // Before Android 14, Health Connect is a separate app from the Play Store.
     if (!isPermission && Platform.OS === 'android') {
-      Linking.openURL(`market://details?id=${HEALTH_CONNECT_PACKAGE}`).catch(() =>
-        Linking.openURL(`https://play.google.com/store/apps/details?id=${HEALTH_CONNECT_PACKAGE}`),
-      );
+      openPlayStore(HEALTH_CONNECT_PACKAGE);
       return;
     }
     try {

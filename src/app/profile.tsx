@@ -162,6 +162,12 @@ function ProfileForm({ profile }: { profile: Profile }) {
 
       {/* Account actions sit apart from Save so Sign out is never tapped by mistake. */}
       <Card style={styles.list}>
+        <Pressable style={styles.link} onPress={() => router.push('/wearables')}>
+          <Ionicons name="watch-outline" size={22} color={colors.primary} />
+          <Txt style={{ flex: 1 }}>Connect a wearable</Txt>
+          <Ionicons name="chevron-forward" size={18} color={colors.textMuted} />
+        </Pressable>
+        <View style={[styles.separator, { backgroundColor: colors.border }]} />
         {Platform.OS !== 'web' && (
           <>
             <Pressable style={styles.link} onPress={() => health.openSettings()}>

@@ -1,11 +1,13 @@
 import {
   isHealthDataAvailableAsync,
+  querySources,
   queryStatisticsCollectionForQuantity,
+  queryStatisticsForQuantity,
   requestAuthorization,
 } from '@kingstinct/react-native-healthkit';
 import { Linking } from 'react-native';
 
-import { endOfDay, startOfDay, toKey } from '@/utils/dates';
+import { addDays, endOfDay, startOfDay, toKey } from '@/utils/dates';
 import type { DailySteps, HealthSource } from './types';
 
 export * from './types';
@@ -36,6 +38,21 @@ export const health: HealthSource = {
       out[toKey(r.startDate)] = Math.round(r.sumQuantity.quantity);
     }
     return out;
+  },
+
+  async getStepSources(days) {
+    const date = { startDate: startOfDay(addDays(new Date(), 1 - days)), endDate: new Date() };
+    const sources = await querySources(STEPS, { date });
+    const out = await Promise.all(
+      sources.map(async (source) => {
+        const r = await queryStatisticsForQuantity(STEPS, ['cumulativeSum'], {
+          filter: { date, sources: [source] },
+          unit: 'count',
+        });
+        return { id: source.bundleIdentifier, name: source.name, steps: Math.round(r.sumQuantity?.quantity ?? 0) };
+      }),
+    );
+    return out.sort((a, b) => b.steps - a.steps);
   },
 
   openSettings: () => {

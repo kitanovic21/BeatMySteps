@@ -1,5 +1,6 @@
 import {
   aggregateGroupByPeriod,
+  aggregateRecord,
   getGrantedPermissions,
   getSdkStatus,
   initialize,
@@ -10,6 +11,7 @@ import {
 
 import { addDays, startOfDay } from '@/utils/dates';
 import { HealthPermissionError, type DailySteps, type HealthSource } from './types';
+import { sourceName } from './wearables';
 
 export * from './types';
 
@@ -68,6 +70,27 @@ export const health: HealthSource = {
       out[g.startTime.slice(0, 10)] = g.result.COUNT_TOTAL ?? 0;
     }
     return out;
+  },
+
+  async getStepSources(days) {
+    await ensureInitialized();
+    if (!(await hasStepsPermission())) throw new HealthPermissionError();
+
+    const timeRangeFilter = {
+      operator: 'between' as const,
+      startTime: startOfDay(addDays(new Date(), 1 - days)).toISOString(),
+      endTime: new Date().toISOString(),
+    };
+    const all = await aggregateRecord({ recordType: 'Steps', timeRangeFilter });
+    // Per-app totals can add up to more than the overall total: Health Connect
+    // drops overlapping steps from the overall sum, not from each app.
+    const sources = await Promise.all(
+      all.dataOrigins.map(async (pkg) => {
+        const r = await aggregateRecord({ recordType: 'Steps', timeRangeFilter, dataOriginFilter: [pkg] });
+        return { id: pkg, name: sourceName(pkg), steps: r.COUNT_TOTAL ?? 0 };
+      }),
+    );
+    return sources.sort((a, b) => b.steps - a.steps);
   },
 
   openSettings: () => openHealthConnectSettings(),

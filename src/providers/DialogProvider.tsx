@@ -134,6 +134,8 @@ export function DialogProvider({ children }: PropsWithChildren) {
   }[tone];
   const actions = dialog?.actions ?? [{ label: 'OK', style: 'primary' as const }];
   const cancelAction = actions.find((a) => a.value === false) ?? null;
+  // Side by side only when two short labels fit; otherwise one per row.
+  const stacked = actions.length > 2 || actions.some((a) => a.label.length > 12);
 
   return (
     <DialogContext.Provider value={api}>
@@ -160,14 +162,14 @@ export function DialogProvider({ children }: PropsWithChildren) {
                 <Txt variant="heading" center>{dialog.title}</Txt>
                 {dialog.message ? <Txt muted center>{dialog.message}</Txt> : null}
               </View>
-              <View style={[styles.actions, actions.length > 2 && styles.actionsStacked]}>
+              <View style={[styles.actions, stacked && styles.actionsStacked]}>
                 {actions.map((a) => (
                   <Button
                     key={a.label}
                     title={a.label}
                     variant={a.style === 'secondary' ? 'secondary' : a.style === 'destructive' ? 'danger' : 'primary'}
                     onPress={() => close(a)}
-                    style={actions.length <= 2 ? styles.actionFlex : undefined}
+                    style={stacked ? undefined : styles.actionFlex}
                   />
                 ))}
               </View>

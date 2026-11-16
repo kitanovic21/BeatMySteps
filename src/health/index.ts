@@ -1,6 +1,6 @@
 // Fallback used on web (and for type-checking). Produces stable demo data so the
 // UI can be previewed without a phone. iOS/Android use index.ios.ts / index.android.ts.
-import { eachDay, startOfDay, toKey } from '@/utils/dates';
+import { addDays, eachDay, startOfDay, toKey } from '@/utils/dates';
 import type { DailySteps, HealthSource } from './types';
 
 export * from './types';
@@ -29,6 +29,15 @@ export const health: HealthSource = {
         : full;
     }
     return out;
+  },
+  async getStepSources(days) {
+    const today = startOfDay(new Date());
+    let total = 0;
+    for (let i = 0; i < days; i++) total += demoSteps(addDays(today, -i));
+    return [
+      { id: 'com.sec.android.app.shealth', name: 'Samsung Health', steps: Math.round(total * 0.8) },
+      { id: 'android', name: 'This phone', steps: Math.round(total * 0.35) },
+    ];
   },
   openSettings: () => {},
 };

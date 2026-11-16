@@ -39,6 +39,7 @@ function RootNavigator() {
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="profile" options={{ presentation: 'modal' }} />
           <Stack.Screen name="notifications" options={{ presentation: 'modal' }} />
+          <Stack.Screen name="wearables" options={{ presentation: 'modal' }} />
           <Stack.Screen name="avatar-crop" options={{ presentation: 'fullScreenModal', animation: 'fade' }} />
         </Stack.Protected>
         <Stack.Protected guard={!session} redirectTo="/">
