@@ -52,6 +52,8 @@ const config: ExpoConfig = {
             name: 'Steps',
             label: 'My steps',
             description: "Today's steps and your daily goal",
+            // Shown in the widget picker; a sample of the real widget.
+            previewImage: './assets/widget-preview-steps.png',
             minWidth: '180dp',
             minHeight: '110dp',
             targetCellWidth: 3,
@@ -64,6 +66,7 @@ const config: ExpoConfig = {
             name: 'Leaderboard',
             label: 'Leaderboard',
             description: 'Top 3 friends today and your place',
+            previewImage: './assets/widget-preview-leaderboard.png',
             minWidth: '250dp',
             minHeight: '180dp',
             targetCellWidth: 4,
