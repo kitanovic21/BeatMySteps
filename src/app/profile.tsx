@@ -10,9 +10,10 @@ import { Screen } from '@/components/Screen';
 import { SegmentedControl } from '@/components/SegmentedControl';
 import { TextField } from '@/components/TextField';
 import { Txt } from '@/components/Txt';
-import { useProfile, useUpdateProfile } from '@/hooks/useProfile';
+import { useProfile, useSetAvatar, useUpdateProfile } from '@/hooks/useProfile';
 import { health } from '@/health';
 import { authErrorMessage, signOut } from '@/lib/auth';
+import { pickAvatarImage } from '@/lib/avatar';
 import type { Profile } from '@/lib/supabase';
 import { useAuth } from '@/providers/AuthProvider';
 import { useDialog } from '@/providers/DialogProvider';
@@ -49,6 +50,7 @@ function ProfileForm({ profile }: { profile: Profile }) {
   const { colors } = useTheme();
   const { session } = useAuth();
   const update = useUpdateProfile();
+  const setAvatar = useSetAvatar();
   const dialog = useDialog();
 
   const [name, setName] = useState(profile.display_name);
@@ -70,6 +72,39 @@ function ProfileForm({ profile }: { profile: Profile }) {
     );
   };
 
+  const chooseNewPhoto = async () => {
+    try {
+      const image = await pickAvatarImage();
+      if (!image) return;
+      router.push({
+        pathname: '/avatar-crop',
+        params: { uri: image.uri, width: String(image.width), height: String(image.height) },
+      });
+    } catch (e) {
+      dialog.alert("Couldn't open photo", authErrorMessage(e), 'error');
+    }
+  };
+
+  const changePhoto = () => {
+    if (!profile.avatar_url) return chooseNewPhoto();
+    dialog.show({
+      title: 'Profile photo',
+      icon: 'image-outline',
+      actions: [
+        { label: 'Choose new photo', style: 'primary', onPress: chooseNewPhoto },
+        {
+          label: 'Remove photo',
+          style: 'destructive',
+          onPress: () =>
+            setAvatar.mutate(null, {
+              onError: (e) => dialog.alert("Couldn't remove photo", authErrorMessage(e), 'error'),
+            }),
+        },
+        { label: 'Cancel', style: 'secondary', value: false },
+      ],
+    });
+  };
+
   const logout = async () => {
     const ok = await dialog.confirm({
       title: 'Sign out?',
@@ -84,7 +119,16 @@ function ProfileForm({ profile }: { profile: Profile }) {
   return (
     <>
       <View style={styles.header}>
-        <Avatar name={name || '?'} url={profile.avatar_url} size={88} />
+        <Pressable onPress={changePhoto} disabled={setAvatar.isPending} accessibilityLabel="Change profile photo">
+          <Avatar name={name || '?'} url={profile.avatar_url} size={88} />
+          <View style={[styles.cameraBadge, { backgroundColor: colors.primary, borderColor: colors.background }]}>
+            {setAvatar.isPending ? (
+              <ActivityIndicator size="small" color={colors.onPrimary} />
+            ) : (
+              <Ionicons name="camera" size={16} color={colors.onPrimary} />
+            )}
+          </View>
+        </Pressable>
         <Txt variant="heading">{name}</Txt>
         <Txt muted>{session?.user.email}</Txt>
       </View>
@@ -162,6 +206,17 @@ function GoalButton({ icon, onPress }: { icon: 'add' | 'remove'; onPress: () => 
 
 const styles = StyleSheet.create({
   header: { alignItems: 'center', gap: spacing.xs },
+  cameraBadge: {
+    position: 'absolute',
+    right: -2,
+    bottom: -2,
+    width: 32,
+    height: 32,
+    borderRadius: radius.pill,
+    borderWidth: 3,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
   goalRow: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
   goalBtn: { width: 48, height: 48, borderRadius: radius.pill, alignItems: 'center', justifyContent: 'center' },
   list: { paddingVertical: spacing.xs },

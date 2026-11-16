@@ -38,6 +38,7 @@ supabase/migrations SQL šema (tabele, RLS, RPC)
 2. **SQL Editor** → nalepi i pokreni, redom:
    - [`supabase/migrations/0001_init.sql`](supabase/migrations/0001_init.sql) (tabele, prijatelji, rang lista)
    - [`supabase/migrations/0002_notifications.sql`](supabase/migrations/0002_notifications.sql) (obaveštenja o zahtevima za prijateljstvo)
+   - [`supabase/migrations/0003_avatars.sql`](supabase/migrations/0003_avatars.sql) (profilne slike: bucket `avatars` i dozvole)
 3. **Project Settings → API** → kopiraj URL i `anon` ključ.
 4. `cp .env.example .env` i upiši vrednosti.
 

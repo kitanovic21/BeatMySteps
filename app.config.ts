@@ -45,6 +45,14 @@ const config: ExpoConfig = {
     'expo-apple-authentication',
     'expo-font',
     [
+      'expo-image-picker',
+      {
+        photosPermission: 'BeatMySteps uses your photos so you can set a profile picture.',
+        cameraPermission: false,
+        microphonePermission: false,
+      },
+    ],
+    [
       'expo-splash-screen',
       {
         image: './assets/splash-icon.png',
