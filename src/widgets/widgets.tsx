@@ -43,6 +43,25 @@ export function renderWidget(name: string, data: WidgetSnapshot, width: number) 
   };
 }
 
+/** Plain fallback drawn if building a widget fails, so it never shows up blank. */
+export function renderFallbackWidget() {
+  return {
+    light: <Fallback p={PALETTES.light} />,
+    dark: <Fallback p={PALETTES.dark} />,
+  };
+}
+
+function Fallback({ p }: { p: Palette }) {
+  return (
+    <Shell p={p} uri="beatmysteps://">
+      <Header p={p} title="BeatMySteps" />
+      <FlexWidget style={{ flex: 1, justifyContent: 'center', width: 'match_parent' }}>
+        <TextWidget text="Tap to open the app" style={{ fontSize: 14, color: p.muted as ColorProp }} />
+      </FlexWidget>
+    </Shell>
+  );
+}
+
 interface Props {
   data: WidgetSnapshot;
   width: number;
