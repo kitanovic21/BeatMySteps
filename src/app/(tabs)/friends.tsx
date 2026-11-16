@@ -64,7 +64,7 @@ const rowExiting = FadeOut.duration(180);
 const rowLayout = LinearTransition.springify().damping(18);
 
 export default function Friends() {
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
   const dialog = useDialog();
   const [period, setPeriod] = useState<BoardPeriod>('day');
   const [search, setSearch] = useState('');
@@ -129,7 +129,12 @@ export default function Friends() {
       {/* Leaderboard */}
       <Card style={{ gap: spacing.md }}>
         <View style={styles.rowBetween}>
-          <Txt variant="heading">🏆 Leaderboard</Txt>
+          <View style={styles.titleRow}>
+            <View style={[styles.titleIcon, { backgroundColor: colors.primary + (dark ? '26' : '1A') }]}>
+              <Ionicons name="trophy-outline" size={18} color={colors.primary} />
+            </View>
+            <Txt variant="heading">Leaderboard</Txt>
+          </View>
           {board.isFetching && <ActivityIndicator size="small" color={colors.primary} />}
         </View>
         <SegmentedControl options={BOARD_PERIODS} value={period} onChange={setPeriod} />
@@ -247,10 +252,15 @@ function PersonRow({ profile, note, children }: { profile: PublicProfile; note?:
 const PODIUM_HEIGHTS = [70, 96, 54];
 
 function Podium({ entries }: { entries: LeaderboardEntry[] }) {
-  const { colors } = useTheme();
+  const { colors, dark } = useTheme();
   // Visual order: 2nd, 1st, 3rd
   const order = [entries[1], entries[0], entries[2]];
-  const medals = [colors.silver, colors.gold, colors.bronze];
+  // Only the winner is coral; 2nd and 3rd stay neutral so first place stands out.
+  const blocks: BlockStyle[] = [
+    { fill: dark ? colors.cardAlt : '#ECEBE8', edge: colors.text, label: colors.text },
+    { fill: colors.primary, edge: colors.primary, label: colors.onPrimary },
+    { fill: colors.cardAlt, edge: colors.textMuted, label: colors.textMuted },
+  ];
   const places = [2, 1, 3];
   // Blocks rise in podium order: 3rd, 2nd, then 1st.
   const riseOrder = [1, 2, 0];
@@ -271,7 +281,7 @@ function Podium({ entries }: { entries: LeaderboardEntry[] }) {
                 </Txt>
               </View>
             </Animated.View>
-            <PodiumBlock height={PODIUM_HEIGHTS[i]} color={medals[i]} place={places[i]} delay={riseOrder[i] * 120} />
+            <PodiumBlock height={PODIUM_HEIGHTS[i]} look={blocks[i]} place={places[i]} delay={riseOrder[i] * 120} />
           </View>
         ) : (
           <View key={i} style={styles.podiumCol} />
@@ -281,7 +291,13 @@ function Podium({ entries }: { entries: LeaderboardEntry[] }) {
   );
 }
 
-function PodiumBlock({ height, color, place, delay }: { height: number; color: string; place: number; delay: number }) {
+interface BlockStyle {
+  fill: string;
+  edge: string;
+  label: string;
+}
+
+function PodiumBlock({ height, look, place, delay }: { height: number; look: BlockStyle; place: number; delay: number }) {
   const h = useSharedValue(0);
   useEffect(() => {
     h.value = withDelay(delay, withTiming(height, { duration: 500, easing: Easing.out(Easing.back(1.4)) }));
@@ -290,8 +306,8 @@ function PodiumBlock({ height, color, place, delay }: { height: number; color: s
 
   return (
     <View style={[styles.podiumSlot, { height }]}>
-      <Animated.View style={[styles.podiumBlock, { backgroundColor: color + '30', borderColor: color }, style]}>
-        <Txt variant="title" color={color}>{place}</Txt>
+      <Animated.View style={[styles.podiumBlock, { backgroundColor: look.fill, borderColor: look.edge }, style]}>
+        <Txt variant="title" color={look.label} style={styles.place}>{place}</Txt>
       </Animated.View>
     </View>
   );
@@ -299,6 +315,9 @@ function PodiumBlock({ height, color, place, delay }: { height: number; color: s
 
 const styles = StyleSheet.create({
   rowBetween: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  titleRow: { flexDirection: 'row', alignItems: 'center', gap: spacing.md },
+  titleIcon: { width: 36, height: 36, borderRadius: radius.sm, alignItems: 'center', justifyContent: 'center' },
+  place: { fontSize: 34 },
   iconBtn: {
     width: 44,
     height: 44,

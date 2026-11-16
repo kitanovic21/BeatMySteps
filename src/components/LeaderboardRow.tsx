@@ -36,7 +36,7 @@ export function LeaderboardRow({ entry, rank, leader }: { entry: LeaderboardEntr
           )}
         </View>
         <View style={[styles.track, { backgroundColor: colors.track }]}>
-          <View style={[styles.fill, { width: `${Math.max(pct * 100, 2)}%`, backgroundColor: medal ?? colors.primary }]} />
+          <View style={[styles.fill, { width: `${Math.max(pct * 100, 2)}%`, backgroundColor: medal ?? (entry.is_me ? colors.primary : colors.textMuted) }]} />
         </View>
       </View>
       <Txt variant="body" weight="800" style={styles.steps} numberOfLines={1}>
